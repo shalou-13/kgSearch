@@ -1,0 +1,6 @@
+/target/
+/workspace(kgHub)/
+/.settings/
+/logs/
+.classpath
+.project
