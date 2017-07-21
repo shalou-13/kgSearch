@@ -15,9 +15,18 @@ public class GraphNode {
 	private Map<String,String> Properties=new HashMap<>();
 	private long id;
 	private int weight;
+	private boolean tagged=false;
 	
 	public GraphNode(){
 		
+	}
+	
+	public boolean getTag(){
+		return this.tagged;
+	}
+	
+	public void setTagTrue(){
+		this.tagged=true;
 	}
 	
 	public GraphNode(Node node){

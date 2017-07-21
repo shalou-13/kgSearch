@@ -3,8 +3,6 @@ package com.kgSearch.pojo;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.validation.constraints.Null;
-
 import org.neo4j.driver.v1.types.Relationship;
 
 public class GraphRelationship {
@@ -13,10 +11,20 @@ public class GraphRelationship {
 	private GraphNode fromNode=new GraphNode();
 	private GraphNode toNode=new GraphNode();
 	private Map<String,String> Properties=new HashMap<>();
+	private boolean tagged=false;
 	
 	public GraphRelationship(){
 		
 	}
+	
+	public boolean getTag(){
+		return this.tagged;
+	}
+	
+	public void setTagTrue(){
+		this.tagged=true;
+	}
+	
 	
 	public GraphRelationship(Relationship relationship){
 		this.id=relationship.id();

@@ -15,14 +15,26 @@ public class GraphPath {
 	private ArrayList<GraphRelationship> edges=new ArrayList<>();
 	private ArrayList<Long> ids=new ArrayList<>();
 	
+	public ArrayList<GraphNode> getNodes(){
+		return this.nodes;
+	}
+	
+	public ArrayList<GraphRelationship> getEdges(){
+		return this.edges;
+	}
+	
 	public boolean setPath(Record record){
 		/*
 		 * 假设输入的路径就是y 如果出现环则丢弃 返回false
 		 * 判断环是否存在 endnodeid不能出现在idset中
-		 *
 		 */
 		int size=record.get(1).size();
 		Set<Long> nodeId=new HashSet<>();
+		
+		if(record.size()==2){
+			this.setOneSidePath(record);
+			return true;
+		}
 		
 		//环的检测
 		for(int i=0;i<size;i++){
@@ -42,8 +54,14 @@ public class GraphPath {
 		
 		//若没有检测到环，则录入数据
 		
+		/*if(size==1){
+			this.setOnePath(record);
+			return true;
+		}*/
+		
 		//录入起点
 		GraphNode graphNode=new GraphNode(record.get(0).asNode());
+		graphNode.setTagTrue();
 		nodes.add(graphNode);
 		
 		//录入边集，顺便录入点id集
@@ -60,6 +78,7 @@ public class GraphPath {
 		
 		//录入终点
 		GraphNode graphNode2=new GraphNode(record.get(2).asNode());
+		graphNode2.setTagTrue();
 		nodes.add(graphNode2);
 		return true;
 	}
@@ -98,7 +117,8 @@ public class GraphPath {
 		//录入起点
 		GraphNode graphNode=new GraphNode(record.get(0).asNode());
 		GraphNode graphNode2=new GraphNode(record.get(2).asNode());
-		
+		graphNode.setTagTrue();
+		graphNode2.setTagTrue();
 		
 		//录入边集，顺便录入点id集
 		Relationship relationship=record.get(1).asRelationship();
@@ -119,6 +139,25 @@ public class GraphPath {
 		return true;
 	}
 	
+	public boolean setOneSidePath(Record record){
+		//由一条边和其所包含的其中之一结点构成
+		if(record.size()!=2){
+			System.out.println("invalid input format");
+			return false;
+		}
+		
+		GraphNode graphNode=new GraphNode(record.get(0).asNode());
+		GraphRelationship graphRelationship=new GraphRelationship(record.get(1).asRelationship());
+		graphNode.setTagTrue();
+		graphRelationship.setTagTrue();
+		
+		nodes.add(graphNode);
+		edges.add(graphRelationship);
+		
+		
+		return true;
+	}
+	
 	public ArrayList<Long> getIds(){
 		return this.ids;
 	}
@@ -127,16 +166,17 @@ public class GraphPath {
 		int i;
 		//System.out.println(edges.size()+" "+nodes.size());
 		for(i=0;i<edges.size();i++){
-			ids.add(nodes.get(i).getId());
 			ids.add(edges.get(i).getId());
 		}
-		ids.add(nodes.get(i).getId());
+		for(i=0;i<edges.size();i++){
+			ids.add(nodes.get(i).getId());
+		}
 	}
 		
 	public static boolean compare(GraphPath graphPath1,GraphPath graphPath2){
 		ArrayList<Long> ids1=graphPath1.getIds();
 		ArrayList<Long> ids2=graphPath2.getIds();
-		System.out.println(ids1+"  "+ids2);
+		//System.out.println(ids1+"  "+ids2);
 		int flag,i;
 		if(ids1.size()!=ids2.size()){
 			return true;
@@ -178,11 +218,13 @@ public class GraphPath {
 	}
 	
 	public void printInf(){
-		System.out.print(this.nodes.get(0).getProperties().get("name"));
+		System.out.print(this.nodes.get(0).getProperties().get("name")+" ");
 		for(GraphRelationship graphRelationship:this.edges){
-			System.out.print(graphRelationship.getProperties().get("name"));
+			System.out.print(graphRelationship.getType().getTypeName()+" ");
 		}
-		System.out.print(this.nodes.get(this.nodes.size()-1).getProperties().get("name"));
+		if(this.nodes.size()>1){
+			System.out.print(this.nodes.get(this.nodes.size()-1).getProperties().get("name"));
+		}
 		System.out.print("\n");
 	}
 }

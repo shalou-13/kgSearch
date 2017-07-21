@@ -23,4 +23,18 @@ public interface GraphHandler {
 	public void adjustEntityList();
 
 	public void initNewEntityLabelList();
+	
+	public void initExtraEntityList();
+	
+	public void adjustEntityRelationshipPathSet();
+	
+	public void adjustEntityEntityPathSet();
+	
+	public void adjustEntityPairsPathSet();
+	
+	public void initSResult();
+	
+	public void finalEntityLabelList();
+	
+	public void finalRelationshipTypeList();
 }
