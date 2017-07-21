@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.enterprise.inject.New;
+
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.GraphDatabase;
@@ -290,6 +292,7 @@ public class GraphHandlerService implements GraphHandler{
 			for(int j=i+1;j<entityList.size();j++){
 				GraphNode graphNode1=entityList.get(i);
 				GraphNode graphNode2=entityList.get(j);
+				where="";
 				where+=" id(x)="+graphNode1.getId()+" and id(z)="+graphNode2.getId();
 				System.out.println("查询语句为： "+"match (x)-[y*]->(z) where"+where+"return x,y,z"+"\n"
 				+"和："+"match (x)<-[y*]-(z) where"+where+"return x,y,z");
@@ -497,8 +500,11 @@ public class GraphHandlerService implements GraphHandler{
 		ArrayList<String> nList=new ArrayList<>();
 		
 		vList.add("a1");
+		vList.add("a2");
 		vList.add("b2");
+		vList.add("b3");
 		vList.add("c3");
+		vList.add("c1");
 		nList.add("A");
 		nList.add("C");
 		nList.add("E");
@@ -687,7 +693,13 @@ public class GraphHandlerService implements GraphHandler{
 				}
 			}
 			if(flag==false){
-				extraEntityList.add(new GraphNode(record.get(0).asNode()));
+				Set<Long> idOfEEL=new HashSet<>();
+				for(GraphNode iter1:extraEntityList){
+					idOfEEL.add(iter1.getId());
+				}
+				if(idOfEEL.contains(new GraphNode(record.get(0).asNode()).getId())==false){
+					extraEntityList.add(new GraphNode(record.get(0).asNode()));
+				}
 			}
 		}
 		System.out.println("initExtraEntityList:");
