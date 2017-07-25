@@ -1,19 +1,13 @@
 package com.kgSearch.pojo;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
-import org.neo4j.driver.v1.Record;
-import org.neo4j.driver.v1.types.Relationship;
+import java.util.Arrays;
 
 
 public class GraphPath {
 	
-	private ArrayList<GraphNode> nodes=new ArrayList<>();
-	private ArrayList<GraphRelationship> edges=new ArrayList<>();
-	private ArrayList<Long> ids=new ArrayList<>();
+	private ArrayList<GraphNode> nodes;
+	private ArrayList<GraphRelationship> edges;
 	
 	public ArrayList<GraphNode> getNodes(){
 		return this.nodes;
@@ -23,11 +17,11 @@ public class GraphPath {
 		return this.edges;
 	}
 	
-	public boolean setPath(Record record){
-		/*
+	/*public boolean setPath(Record record){
+		
 		 * 假设输入的路径就是y 如果出现环则丢弃 返回false
 		 * 判断环是否存在 endnodeid不能出现在idset中
-		 */
+		 
 		int size=record.get(1).size();
 		Set<Long> nodeId=new HashSet<>();
 		
@@ -54,10 +48,10 @@ public class GraphPath {
 		
 		//若没有检测到环，则录入数据
 		
-		/*if(size==1){
+		if(size==1){
 			this.setOnePath(record);
 			return true;
-		}*/
+		}
 		
 		//录入起点
 		GraphNode graphNode=new GraphNode(record.get(0).asNode());
@@ -84,12 +78,12 @@ public class GraphPath {
 	}
 	
 	public boolean setOnePath(Record record){
-		/*
+		
 		 * 假设输入的路径就是y 如果出现环则丢弃 返回false
 		 * 判断环是否存在 endnodeid不能出现在idset中
 		 *
-		 */
-		/*
+		 
+		
 		int size=record.get(1).size();
 		Set<Long> nodeId=new HashSet<>();
 		
@@ -111,7 +105,7 @@ public class GraphPath {
 		
 		//若没有检测到环，则录入数据
 		
-		*/
+		
 		
 		
 		//录入起点
@@ -156,75 +150,62 @@ public class GraphPath {
 		
 		
 		return true;
-	}
+	}*/
 	
-	public ArrayList<Long> getIds(){
-		return this.ids;
-	}
-	
-	public void setIds(){
-		int i;
-		//System.out.println(edges.size()+" "+nodes.size());
-		for(i=0;i<edges.size();i++){
-			ids.add(edges.get(i).getId());
-		}
-		for(i=0;i<edges.size();i++){
-			ids.add(nodes.get(i).getId());
-		}
-	}
 		
-	public static boolean compare(GraphPath graphPath1,GraphPath graphPath2){
-		ArrayList<Long> ids1=graphPath1.getIds();
-		ArrayList<Long> ids2=graphPath2.getIds();
-		//System.out.println(ids1+"  "+ids2);
-		int flag,i;
-		if(ids1.size()!=ids2.size()){
+	public boolean compare(GraphPath graphPath){
+		long[] nodeIDs1 = new long[this.nodes.size()];
+		long[] edgeIDs1 = new long[this.edges.size()];
+		long[] nodeIDs2 = new long[graphPath.nodes.size()];
+		long[] edgeIDs2 = new long[graphPath.edges.size()];
+		for(int i = 0;i<this.nodes.size();i++){
+			nodeIDs1[i] = this.nodes.get(i).getId();
+		}
+		for(int j = 0;j<this.edges.size();j++){
+			edgeIDs1[j] = this.edges.get(j).getId();
+		}
+		for(int m = 0;m<graphPath.nodes.size();m++){
+			nodeIDs2[m] = graphPath.nodes.get(m).getId();
+		}
+		for(int n = 0;n<graphPath.edges.size();n++){
+			edgeIDs2[n] = graphPath.edges.get(n).getId();
+		}
+		if(Arrays.equals(nodeIDs1, nodeIDs2) && Arrays.equals(edgeIDs1, edgeIDs2))
 			return true;
-		}
-		for(i=flag=0;i<ids1.size();i++){
-			if(ids1.get(i)!=ids2.get(i)){
-				flag=1;
-				break;
-			}
-		}
-		if(flag==0){
-			return false;
-		}
-		for(i=flag=0;i<ids1.size();i++){
-			if(ids1.get(i)!=ids2.get(ids1.size()-i-1)){
-				flag=1;
-				break;
-			}
-		}
-		if(flag==0){
-			return false;
-		}
-		return true;
+		return false;
 	}
 
-	public static boolean contains(GraphPath graphPath1,GraphPath graphPath2){
-		//不包含返回true,包含返回false
-		if(graphPath1.getIds().size()==graphPath2.getIds().size()){
-			return compare(graphPath1, graphPath2);
-		}
-		ArrayList<Long> longer=(graphPath1.getIds().size()>graphPath2.getIds().size())?graphPath1.getIds():graphPath2.getIds();
-		ArrayList<Long> shorter=(graphPath1.getIds().size()>graphPath2.getIds().size())?graphPath2.getIds():graphPath1.getIds();
-		ArrayList<Long> arrshorter=shorter;
-		Collections.reverse(arrshorter);
-		if(longer.toString().indexOf(shorter.toString())!=-1||longer.toString().indexOf(arrshorter.toString())!=-1){
+	public boolean contains(GraphPath graphPath){
+		if((this.nodes.size()>graphPath.nodes.size())){
+			long[] nodeIDs1 = new long[this.nodes.size()];
+			long[] edgeIDs1 = new long[this.edges.size()];
+			for(int i = 0;i<this.nodes.size();i++){
+				nodeIDs1[i] = this.nodes.get(i).getId();
+			}
+			for(int j = 0;j<this.nodes.size();j++){
+				edgeIDs1[j] = this.edges.get(j).getId();
+			}
+			boolean hasNode = true;
+			boolean hasRelation = true;
+			for(int m = 0;m<graphPath.nodes.size();m++){
+				if(!Arrays.asList(nodeIDs1).contains(graphPath.nodes.get(m).getId())){
+					hasNode = false;
+					break;
+				}
+			}
+			if(hasNode){
+				for(int n = 0;n<graphPath.edges.size();n++){
+					if(!Arrays.asList(edgeIDs1).contains(graphPath.edges.get(n).getId())){
+						hasRelation = false;
+						break;
+					}
+				}
+			}
+			if(hasNode && hasRelation)
+				return true;
 			return false;
 		}
-		return true;
+		return false;
 	}
 	
-	public void printInf(){
-		System.out.print(this.nodes.get(0).getProperties().get("name")+" ");
-		for(GraphRelationship graphRelationship:this.edges){
-			System.out.print(graphRelationship.getType().getTypeName()+" ");
-		}
-		if(this.nodes.size()>1){
-			System.out.print(this.nodes.get(this.nodes.size()-1).getProperties().get("name"));
-		}
-		System.out.print("\n");
-	}
 }

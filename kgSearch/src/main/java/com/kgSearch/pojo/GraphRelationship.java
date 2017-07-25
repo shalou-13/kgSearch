@@ -1,32 +1,61 @@
 package com.kgSearch.pojo;
 
-import java.util.HashMap;
 import java.util.Map;
-
-import org.neo4j.driver.v1.types.Relationship;
 
 public class GraphRelationship {
 	private long id;
-	private GraphRelationshipType Type=new GraphRelationshipType();
-	private GraphNode fromNode=new GraphNode();
-	private GraphNode toNode=new GraphNode();
-	private Map<String,String> Properties=new HashMap<>();
-	private boolean tagged=false;
+	private int Type;
+	private long fromNode;
+	private long toNode;
+	private Map<String,Object> Properties;
+	private MatchTags matchTags;
+	private int weight;
 	
-	public GraphRelationship(){
-		
+	public long getId() {
+		return id;
+	}
+	public void setId(long id) {
+		this.id = id;
+	}
+	public int getType() {
+		return Type;
+	}
+	public void setType(int type) {
+		Type = type;
 	}
 	
-	public boolean getTag(){
-		return this.tagged;
+	public long getFromNode() {
+		return fromNode;
+	}
+	public void setFromNode(long fromNode) {
+		this.fromNode = fromNode;
+	}
+	public long getToNode() {
+		return toNode;
+	}
+	public void setToNode(long toNode) {
+		this.toNode = toNode;
+	}
+	public int getWeight() {
+		return weight;
+	}
+	public void setWeight(int weight) {
+		this.weight = weight;
+	}
+	public MatchTags getMatchTags() {
+		return matchTags;
+	}
+	public void setMatchTags(MatchTags matchTags) {
+		this.matchTags = matchTags;
+	}
+	public Map<String, Object> getProperties() {
+		return Properties;
+	}
+	public void setProperties(Map<String, Object> properties) {
+		Properties = properties;
 	}
 	
-	public void setTagTrue(){
-		this.tagged=true;
-	}
-	
-	
-	public GraphRelationship(Relationship relationship){
+	/*public GraphRelationship(Relationship relationship){
 		this.id=relationship.id();
 		this.Type.setTypeName(relationship.type());
 		this.Type.setWeight(1);
@@ -35,71 +64,7 @@ public class GraphRelationship {
 		for(String iter1:relationship.keys()){
 			Properties.put(iter1,relationship.get(iter1).asString());
 		}
-	}
+	}*/
 	
-	public void setId(Long id){
-		this.id=id;
-	}
 	
-	public void setType(GraphRelationshipType Type){
-		this.Type=Type;
-	}
-	
-	public void setType(Relationship relationship){
-		GraphRelationshipType graphRelationshipType=new GraphRelationshipType();
-		graphRelationshipType.setTypeName(relationship.type());
-		graphRelationshipType.setWeight(1);
-		this.Type=graphRelationshipType;
-	}
-	
-	public void setFromNode(GraphNode node){
-		this.fromNode=node;
-	}
-	
-	public void setToNode(GraphNode node){
-		this.toNode=node;
-	}
-	
-	public void setProperties(Map<String,String> properties){
-		this.Properties=properties;
-	}
-	
-	public void setProperties(Relationship relationship){
-		for(String iter1:relationship.keys()){
-			String temp=relationship.get(iter1).asString();
-			this.Properties.put(iter1,temp);
-		}
-	}
-	
-	public void increaseWeight(int increment){
-		this.Type.setWeight(this.Type.getWeight()+increment);
-	}
-	
-	public long getId(){
-		return this.id;
-	}
-	
-	public GraphRelationshipType getType(){
-		return this.Type;
-	}
-	
-	public GraphNode getFromNode(){
-		return this.fromNode;
-	}
-	
-	public GraphNode getToNode(){
-		return this.toNode;
-	}
-	
-	public Map<String,String> getProperties(){
-		return this.Properties;
-	}
-	
-	public void printInf(){
-		System.out.print("id:"+this.id+" type:"+this.Type.getTypeName()+" weight:"+this.Type.getWeight());
-		if(this.fromNode!=null)		System.out.print(" fromNodeId:"+this.fromNode.getId());
-		if(this.toNode!=null)		System.out.print(" toNodeId:"+this.toNode.getId());
-		if(this.Properties.containsKey("name"))		System.out.print(" name:"+this.Properties.get("name"));
-		System.out.print("\n");
-	}
 }
