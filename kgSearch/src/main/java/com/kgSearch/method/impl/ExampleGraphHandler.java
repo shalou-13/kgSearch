@@ -2,12 +2,9 @@ package com.kgSearch.method.impl;
 
 import java.util.ArrayList;
 
-import org.neo4j.driver.v1.AuthTokens;
-import org.neo4j.driver.v1.GraphDatabase;
 import org.neo4j.driver.v1.Session;
 
 import com.kgSearch.method.GraphHandler;
-import com.kgSearch.pojo.AuthToken;
 import com.kgSearch.pojo.GraphNode;
 import com.kgSearch.pojo.GraphNodeLabel;
 import com.kgSearch.pojo.GraphPath;
@@ -17,13 +14,15 @@ import com.kgSearch.pojo.GraphRelationshipType;
 public class ExampleGraphHandler extends GraphHandler {
 	
 	private Session session;
-
-	public ExampleGraphHandler(ArrayList<String> verbList, ArrayList<String> adList, ArrayList<String> nounList, String dbType, String host, AuthToken token) {
-		super(verbList, adList, nounList);
-		if(dbType.equals("neo4j")){
-			this.session = GraphDatabase.driver(host, AuthTokens.basic(token.getUserName(),token.getPassword())).session();
-		}
+	
+	public Session getSession() {
+		return session;
 	}
+
+	public void setSession(Session session) {
+		this.session = session;
+	}
+
 	
 	@Override
 	public ArrayList<GraphRelationshipType> searchRelationshipTypeByVerb() {

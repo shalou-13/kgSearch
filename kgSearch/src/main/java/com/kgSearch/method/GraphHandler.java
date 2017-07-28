@@ -16,6 +16,7 @@ import com.kgSearch.pojo.GraphRelationship;
 import com.kgSearch.pojo.GraphRelationshipType;
 import com.kgSearch.pojo.MatchTags;
 
+@Service
 public class GraphHandler {
 	
 	private ArrayList<String> verbList;
@@ -31,12 +32,6 @@ public class GraphHandler {
 	private ArrayList<GraphNode> sub_EL;
 	private ArrayList<GraphPathPattern> SResult;
 	
-	public GraphHandler(ArrayList<String> verbList, ArrayList<String> adList, ArrayList<String> nounList){
-		this.verbList = verbList;
-		this.adList = adList;
-		this.nounList = nounList;
-	}
-		
 	public ArrayList<GraphRelationshipType> searchRelationshipTypeByVerb(){
 		return null;
 	}
@@ -421,6 +416,78 @@ public class GraphHandler {
 
 		public void setNounList(ArrayList<String> nounList) {
 			this.nounList = nounList;
+		}
+
+		public ArrayList<GraphRelationshipType> getRTL() {
+			return RTL;
+		}
+
+		public void setRTL(ArrayList<GraphRelationshipType> rTL) {
+			RTL = rTL;
+		}
+
+		public ArrayList<GraphNodeLabel> getELL() {
+			return ELL;
+		}
+
+		public void setELL(ArrayList<GraphNodeLabel> eLL) {
+			ELL = eLL;
+		}
+
+		public ArrayList<GraphNode> getEL() {
+			return EL;
+		}
+
+		public void setEL(ArrayList<GraphNode> eL) {
+			EL = eL;
+		}
+
+		public ArrayList<GraphPath> getTResult() {
+			return TResult;
+		}
+
+		public void setTResult(ArrayList<GraphPath> tResult) {
+			TResult = tResult;
+		}
+
+		public ArrayList<GraphNode> getEEL() {
+			return EEL;
+		}
+
+		public void setEEL(ArrayList<GraphNode> eEL) {
+			EEL = eEL;
+		}
+
+		public ArrayList<GraphRelationshipType> getSub_RTL() {
+			return sub_RTL;
+		}
+
+		public void setSub_RTL(ArrayList<GraphRelationshipType> sub_RTL) {
+			this.sub_RTL = sub_RTL;
+		}
+
+		public ArrayList<GraphNodeLabel> getSub_ELL() {
+			return sub_ELL;
+		}
+
+		public void setSub_ELL(ArrayList<GraphNodeLabel> sub_ELL) {
+			this.sub_ELL = sub_ELL;
+		}
+
+		public ArrayList<GraphNode> getSub_EL() {
+			return sub_EL;
+		}
+
+		public void setSub_EL(ArrayList<GraphNode> sub_EL) {
+			this.sub_EL = sub_EL;
+		}
+
+		public ArrayList<GraphPathPattern> getSResult() {
+			return SResult;
+		}
+
+		public void setSResult(ArrayList<GraphPathPattern> sResult) {
+			SResult = sResult;
 		}
 
 		
