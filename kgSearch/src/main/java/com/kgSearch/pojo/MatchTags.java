@@ -11,6 +11,12 @@ public class MatchTags {
 	private ArrayList<String> nounMatchList;
 	private ArrayList<String> nounLabelMatchList;
 	
+	public void init(){
+		this.verbMatchList=new ArrayList<>();
+		this.adjMatchList=new ArrayList<>();
+		this.nounMatchList=new ArrayList<>();
+		this.nounLabelMatchList=new ArrayList<>();
+	}
 	
 	public boolean isVerbMatch() {
 		return isVerbMatch;

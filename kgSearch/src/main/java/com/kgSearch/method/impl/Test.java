@@ -64,14 +64,11 @@ public class Test {
 		verbList.add("R1");
 		verbList.add("R3");
 		
-		adList.add("r2");
+		adList.add("l2");
 		adList.add("l1");
-		adList.add("l51");
+		adList.add("l3");
 		
-		nounList.add("L2");
-		nounList.add("L4");
-		nounList.add("l34a");
-		nounList.add("l34b");
+		nounList.add("l2a");
 		
 		AuthToken authToken=new AuthToken();
 		authToken.setUserName("neo4j");

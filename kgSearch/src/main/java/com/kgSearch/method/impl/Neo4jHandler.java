@@ -254,6 +254,7 @@ public class Neo4jHandler extends GraphHandler{
 						graphRelationshipType.setTypeName(Atype);
 						graphRelationshipType.setWeight(1);
 						MatchTags matchTags=new MatchTags();
+						matchTags.init();
 						matchTags.setVerbMatch(true);
 						matchTags.addVerbMatchTag(Averb);
 						graphRelationshipType.setMatchTags(matchTags);
@@ -288,6 +289,7 @@ public class Neo4jHandler extends GraphHandler{
 						graphRelationshipType.setTypeName(Atype);
 						graphRelationshipType.setWeight(1);
 						MatchTags matchTags=new MatchTags();
+						matchTags.init();
 						matchTags.setAdjMatch(true);
 						matchTags.addAdjMatchTag(Aadj);
 						graphRelationshipType.setMatchTags(matchTags);
@@ -321,6 +323,7 @@ public class Neo4jHandler extends GraphHandler{
 						graphNodeLabel.setLabelName(Alabel);
 						graphNodeLabel.setWeight(0);
 						MatchTags matchTags=new MatchTags();
+						matchTags.init();
 						matchTags.setNounMatch(true);
 						matchTags.addNounMatchTag(Anoun);
 						graphNodeLabel.setMatchTags(matchTags);
@@ -360,6 +363,7 @@ public class Neo4jHandler extends GraphHandler{
 						graphNodeLabel.setLabelName(Alabel);
 						graphNodeLabel.setWeight(1);
 						MatchTags matchTags=new MatchTags();
+						matchTags.init();
 						matchTags.setAdjMatch(true);
 						matchTags.addAdjMatchTag(Aadj);
 						graphNodeLabel.setMatchTags(matchTags);
@@ -406,6 +410,7 @@ public class Neo4jHandler extends GraphHandler{
 								labels.add(labelIntMap.get(temp));
 							}
 							MatchTags matchTags=new MatchTags();
+							matchTags.init();
 							matchTags.setNounMatch(true);
 							matchTags.addNounMatchTag(Anoun);
 							GraphNode graphNode=new GraphNode();
@@ -570,7 +575,6 @@ public class Neo4jHandler extends GraphHandler{
 	public ArrayList<GraphPathPattern> searchPattern(ArrayList<GraphNodeLabel> sub_ELL,
 			ArrayList<GraphRelationshipType> sub_RTL) {
 		if(sub_ELL==null||sub_RTL==null){
-			System.out.println("123");
 			return null;
 		}
 		System.out.println("sub_ELL sub_RTL:");
