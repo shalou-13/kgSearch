@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
 
+import org.springframework.stereotype.Service;
+
 import com.kgSearch.pojo.GraphNode;
 import com.kgSearch.pojo.GraphNodeLabel;
 import com.kgSearch.pojo.GraphPath;
@@ -395,6 +397,33 @@ public class GraphHandler {
 				}
 			}
 		}
+		
+		
+		public ArrayList<String> getVerbList() {
+			return verbList;
+		}
+
+		public void setVerbList(ArrayList<String> verbList) {
+			this.verbList = verbList;
+		}
+
+		public ArrayList<String> getAdList() {
+			return adList;
+		}
+
+		public void setAdList(ArrayList<String> adList) {
+			this.adList = adList;
+		}
+
+		public ArrayList<String> getNounList() {
+			return nounList;
+		}
+
+		public void setNounList(ArrayList<String> nounList) {
+			this.nounList = nounList;
+		}
+
+		
 		
 }
 //自定义一个比较器  

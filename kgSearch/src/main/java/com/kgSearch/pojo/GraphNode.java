@@ -44,6 +44,12 @@ public class GraphNode {
 	public void setProperties(Map<String, Object> properties) {
 		Properties = properties;
 	}
+	public void setLabelsById(Map<Long,ArrayList<String>> idLabelMap,Map<String,Integer> labelIntMap){
+		Labels=new ArrayList<>();
+		for(String Alabel:idLabelMap.get(this.id)){
+			Labels.add(labelIntMap.get(Alabel));
+		}
+	}
 	
 	/*public GraphNode(Node node){
 		this.id=node.id();

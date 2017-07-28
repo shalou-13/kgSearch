@@ -54,6 +54,9 @@ public class GraphRelationship {
 	public void setProperties(Map<String, Object> properties) {
 		Properties = properties;
 	}
+	public void setTypeById(Map<Long,String> idTypeMap,Map<String,Integer> typeIntMap){
+		this.Type=typeIntMap.get(idTypeMap.get(this.id));
+	}
 	
 	/*public GraphRelationship(Relationship relationship){
 		this.id=relationship.id();

@@ -88,7 +88,7 @@ public class ExampleGraphHandler extends GraphHandler {
 	}
 	
 
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		ArrayList<String> verbList = new ArrayList<String>();
 		ArrayList<String> adList = new ArrayList<String>();
 		ArrayList<String> nounList = new ArrayList<String>();
@@ -97,6 +97,6 @@ public class ExampleGraphHandler extends GraphHandler {
 		token.setPassword("123456");
 		ExampleGraphHandler handler = new ExampleGraphHandler(verbList, adList, nounList, "neo4j", "bolt://localhost",token);
 		handler.searchAction();
-	}
+	}*/
 
 }
