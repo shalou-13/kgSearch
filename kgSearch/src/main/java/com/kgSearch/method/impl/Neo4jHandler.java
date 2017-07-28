@@ -6,20 +6,16 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Resource;
-
-import org.junit.runner.RunWith;
-import org.neo4j.driver.v1.AuthTokens;
-import org.neo4j.driver.v1.GraphDatabase;
 import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.driver.v1.types.Node;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import com.kgSearch.dao.LabelPropertiesMapper;
+import com.kgSearch.dao.TypePropertiesMapper;
 import com.kgSearch.method.GraphHandler;
-import com.kgSearch.pojo.AuthToken;
 import com.kgSearch.pojo.GraphNode;
 import com.kgSearch.pojo.GraphNodeLabel;
 import com.kgSearch.pojo.GraphPath;
@@ -28,14 +24,15 @@ import com.kgSearch.pojo.GraphRelationshipType;
 import com.kgSearch.pojo.LabelProperties;
 import com.kgSearch.pojo.MatchTags;
 import com.kgSearch.pojo.TypeProperties;
-import com.kgSearch.service.INeo4jDBService;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath*:spring-mybatis.xml" })
+@Service
 public class Neo4jHandler extends GraphHandler{
 
-	@Resource
-	private INeo4jDBService service;
+	@Autowired
+	private LabelPropertiesMapper labelPropertiesService;
+	
+	@Autowired
+	private TypePropertiesMapper typePropertiesService;
 	
 	private Session session;
 	private Map<String,ArrayList<String>> labelPropertiesMap;
@@ -47,19 +44,14 @@ public class Neo4jHandler extends GraphHandler{
 	private Map<Long,ArrayList<String>> idLabelMap;
 	private Map<Long,String> idTypeMap;
 	
-	public Neo4jHandler(ArrayList<String> verbList, ArrayList<String> adList, ArrayList<String> nounList, String host, AuthToken token) {
-		super(verbList, adList, nounList);
-		this.session = GraphDatabase.driver(host, AuthTokens.basic(token.getUserName(),token.getPassword())).session();
+	public Session getSession() {
+		return session;
 	}
 
-	@Deprecated
-	public void setPropertiesMaps(Map<String,Integer> labelIntMap,Map<String,Integer> typeIntMap,Map<String,ArrayList<String>> labelPropertiesMap,Map<String,ArrayList<String>> typePropertiesMap){
-		this.labelIntMap=labelIntMap;
-		this.typeIntMap=typeIntMap;
-		this.labelPropertiesMap=labelPropertiesMap;
-		this.typePropertiesMap=typePropertiesMap;
+	public void setSession(Session session) {
+		this.session = session;
 	}
-	
+
 	public void initPropertiesMaps(){
 		//通过mybatis获得labelPropertiesMap和typePropertiesMap相关的信息
 		labelIntMap=new HashMap<>();
@@ -67,8 +59,8 @@ public class Neo4jHandler extends GraphHandler{
 		labelPropertiesMap=new HashMap<>();
 		typePropertiesMap=new HashMap<>();
 		try{
-			ArrayList<TypeProperties> typeProperties=(ArrayList<TypeProperties>)service.selectAllTypes();
-			ArrayList<LabelProperties> labelProperties=(ArrayList<LabelProperties>)service.selectAllLabels();
+			ArrayList<TypeProperties> typeProperties=(ArrayList<TypeProperties>)typePropertiesService.selectAll();
+			ArrayList<LabelProperties> labelProperties=(ArrayList<LabelProperties>)labelPropertiesService.selectAll();
 			for(TypeProperties element:typeProperties){
 				typeIntMap.put(element.getType(),element.getId());
 				ArrayList<String> propertiesOfAType=new ArrayList<>();
@@ -87,62 +79,11 @@ public class Neo4jHandler extends GraphHandler{
 				}
 				labelPropertiesMap.put(element.getLabel(),propertiesOfALabel);
 			}
-		
-			System.out.println("typePropertiesMap:"+typePropertiesMap);
-			System.out.println("labelPropertiesMap:"+labelPropertiesMap);
-			System.out.println("typeIntMap:"+typeIntMap);
-			System.out.println("labelIntMap:"+labelIntMap);
 		}
 		catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
-		
-		//测试用
-		
-		
-		/*ArrayList<String> temp=new ArrayList<>();
-		temp.add("r1");
-		typeIntMap.put("R1",1);
-		typePropertiesMap.put("R1",temp);
-		ArrayList<String> temp1=new ArrayList<>();
-		temp1.add("r2");
-		temp1.add("r21");
-		typeIntMap.put("R2",2);
-		typePropertiesMap.put("R2",temp1);
-		ArrayList<String> temp2=new ArrayList<>();
-		temp2.add("r3");
-		temp2.add("r32");
-		typeIntMap.put("R3",3);
-		typePropertiesMap.put("R3",temp2);
-		
-		ArrayList<String> temp3=new ArrayList<>();
-		temp3.add("l1");
-		labelIntMap.put("L1",1);
-		labelIntMap.put("L2",2);
-		labelIntMap.put("L3",3);
-		labelIntMap.put("L4",4);
-		labelIntMap.put("L5",5);
-		labelPropertiesMap.put("L1",temp3);
-		ArrayList<String> temp4=new ArrayList<>();
-		temp4.add("l2");
-		labelPropertiesMap.put("L2",temp4);
-		ArrayList<String> temp5=new ArrayList<>();
-		temp5.add("l3");
-		temp5.add("l34");
-		labelPropertiesMap.put("L3",temp5);
-		ArrayList<String> temp6=new ArrayList<>();
-		temp6.add("l4");
-		labelPropertiesMap.put("L4",temp6);
-		ArrayList<String> temp7=new ArrayList<>();
-		temp7.add("l5");
-		temp7.add("l51");
-		labelPropertiesMap.put("L5",temp7);
-		
-		System.out.println("typePropertiesMap:"+typePropertiesMap);
-		System.out.println("labelPropertiesMap:"+labelPropertiesMap);
-		System.out.println("typeIntMap:"+typeIntMap);
-		System.out.println("labelIntMap:"+labelIntMap);*/
 	}
 	
 	public void initIdMaps(){
@@ -254,7 +195,6 @@ public class Neo4jHandler extends GraphHandler{
 						graphRelationshipType.setTypeName(Atype);
 						graphRelationshipType.setWeight(1);
 						MatchTags matchTags=new MatchTags();
-						matchTags.init();
 						matchTags.setVerbMatch(true);
 						matchTags.addVerbMatchTag(Averb);
 						graphRelationshipType.setMatchTags(matchTags);
@@ -289,7 +229,6 @@ public class Neo4jHandler extends GraphHandler{
 						graphRelationshipType.setTypeName(Atype);
 						graphRelationshipType.setWeight(1);
 						MatchTags matchTags=new MatchTags();
-						matchTags.init();
 						matchTags.setAdjMatch(true);
 						matchTags.addAdjMatchTag(Aadj);
 						graphRelationshipType.setMatchTags(matchTags);
@@ -323,7 +262,6 @@ public class Neo4jHandler extends GraphHandler{
 						graphNodeLabel.setLabelName(Alabel);
 						graphNodeLabel.setWeight(0);
 						MatchTags matchTags=new MatchTags();
-						matchTags.init();
 						matchTags.setNounMatch(true);
 						matchTags.addNounMatchTag(Anoun);
 						graphNodeLabel.setMatchTags(matchTags);
@@ -363,7 +301,6 @@ public class Neo4jHandler extends GraphHandler{
 						graphNodeLabel.setLabelName(Alabel);
 						graphNodeLabel.setWeight(1);
 						MatchTags matchTags=new MatchTags();
-						matchTags.init();
 						matchTags.setAdjMatch(true);
 						matchTags.addAdjMatchTag(Aadj);
 						graphNodeLabel.setMatchTags(matchTags);
@@ -410,7 +347,6 @@ public class Neo4jHandler extends GraphHandler{
 								labels.add(labelIntMap.get(temp));
 							}
 							MatchTags matchTags=new MatchTags();
-							matchTags.init();
 							matchTags.setNounMatch(true);
 							matchTags.addNounMatchTag(Anoun);
 							GraphNode graphNode=new GraphNode();
@@ -575,6 +511,7 @@ public class Neo4jHandler extends GraphHandler{
 	public ArrayList<GraphPathPattern> searchPattern(ArrayList<GraphNodeLabel> sub_ELL,
 			ArrayList<GraphRelationshipType> sub_RTL) {
 		if(sub_ELL==null||sub_RTL==null){
+			System.out.println("123");
 			return null;
 		}
 		System.out.println("sub_ELL sub_RTL:");
@@ -617,7 +554,7 @@ public class Neo4jHandler extends GraphHandler{
 		return SResult;
 	}
 	
-	public static void main(String args[]){
+	/*public static void main(String args[]){
 		ArrayList<String> verbList=new ArrayList<>();
 		ArrayList<String> nounList=new ArrayList<>();
 		ArrayList<String> adList=new ArrayList<>();
@@ -642,6 +579,6 @@ public class Neo4jHandler extends GraphHandler{
 		handler.initIdMaps();
 		
 		handler.searchAction();
-	}
+	}*/
 
 }
