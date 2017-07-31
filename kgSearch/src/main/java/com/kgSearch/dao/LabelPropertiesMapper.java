@@ -20,4 +20,8 @@ public interface LabelPropertiesMapper {
     int updateByPrimaryKey(LabelProperties record);
     
     ArrayList<LabelProperties> selectAll();
+    
+    ArrayList<LabelProperties> fuzzySelectLabelByString(String label);
+    
+    ArrayList<LabelProperties> fuzzySelectPropertiesByString(String property);
 }

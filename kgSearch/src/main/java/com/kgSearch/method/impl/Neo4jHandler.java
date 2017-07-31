@@ -388,7 +388,7 @@ public class Neo4jHandler extends GraphHandler{
 					while(statementResult.hasNext()){
 						Record record=statementResult.next();
 						GraphPath graphPath=new GraphPath();
-						graphPath.setPath(record);
+						graphPath.setPath(record, labelIntMap, labelIntMap);
 						graphPath.setTypeAndLabels(idLabelMap, labelIntMap, idTypeMap, typeIntMap);
 						EPPS.add(graphPath);
 					}
@@ -396,7 +396,7 @@ public class Neo4jHandler extends GraphHandler{
 					while(statementResult.hasNext()){
 						Record record=statementResult.next();
 						GraphPath graphPath=new GraphPath();
-						graphPath.setRevPath(record);
+						graphPath.setRevPath(record, labelIntMap, labelIntMap);
 						graphPath.setTypeAndLabels(idLabelMap, labelIntMap, idTypeMap, typeIntMap);
 						EPPS.add(graphPath);
 					}
@@ -423,7 +423,7 @@ public class Neo4jHandler extends GraphHandler{
 					while(statementResult.hasNext()){
 						Record record=statementResult.next();
 						GraphPath graphPath=new GraphPath();
-						graphPath.setOnePath(record);
+						graphPath.setOnePath(record, labelIntMap, labelIntMap);
 						graphPath.setTypeAndLabels(idLabelMap, labelIntMap, idTypeMap, typeIntMap);
 						EEPS.add(graphPath);
 					}
@@ -451,7 +451,7 @@ public class Neo4jHandler extends GraphHandler{
 					while(statementResult.hasNext()){
 						Record record=statementResult.next();
 						GraphPath graphPath=new GraphPath();
-						graphPath.setOnePath(record);
+						graphPath.setOnePath(record, labelIntMap, labelIntMap);
 						graphPath.setTypeAndLabels(idLabelMap, labelIntMap, idTypeMap, typeIntMap);
 						ERPS.add(graphPath);
 					}
@@ -459,7 +459,7 @@ public class Neo4jHandler extends GraphHandler{
 					while(statementResult.hasNext()){
 						Record record=statementResult.next();
 						GraphPath graphPath=new GraphPath();
-						graphPath.setOnePath(record);
+						graphPath.setOnePath(record, labelIntMap, labelIntMap);
 						graphPath.setTypeAndLabels(idLabelMap, labelIntMap, idTypeMap, typeIntMap);
 						ERPS.add(graphPath);
 					}
@@ -486,7 +486,7 @@ public class Neo4jHandler extends GraphHandler{
 					while(statementResult.hasNext()){
 						Record record=statementResult.next();
 						GraphPath graphPath=new GraphPath();
-						graphPath.setPath(record);
+						graphPath.setPath(record, labelIntMap, labelIntMap);
 						graphPath.setTypeAndLabels(idLabelMap, labelIntMap, idTypeMap, typeIntMap);
 						EPPS.add(graphPath);
 					}
@@ -494,7 +494,7 @@ public class Neo4jHandler extends GraphHandler{
 					while(statementResult.hasNext()){
 						Record record=statementResult.next();
 						GraphPath graphPath=new GraphPath();
-						graphPath.setRevPath(record);
+						graphPath.setRevPath(record, labelIntMap, labelIntMap);
 						graphPath.setTypeAndLabels(idLabelMap, labelIntMap, idTypeMap, typeIntMap);
 						EPPS.add(graphPath);
 					}

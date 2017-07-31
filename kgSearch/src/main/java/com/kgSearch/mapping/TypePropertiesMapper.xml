@@ -26,6 +26,16 @@
     select *
     from tp
   </select>
+  <select id="fuzzySelectTypeByString" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select *
+    from tp
+    where type like '%${_parameter}%'
+  </select>
+  <select id="fuzzySelectPropertiesByString" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select *
+    from tp
+    where properties like '%${_parameter}%'
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from tp
     where id = #{id,jdbcType=INTEGER}

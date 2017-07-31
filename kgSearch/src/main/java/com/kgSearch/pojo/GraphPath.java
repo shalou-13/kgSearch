@@ -2,6 +2,7 @@ package com.kgSearch.pojo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.neo4j.driver.v1.Record;
@@ -22,67 +23,91 @@ public class GraphPath {
 		return this.edges;
 	}
 	
-	public void setPath(Record record){
+	public void setPath(Record record,Map<String,Integer> labelIdMap,Map<String,Integer> typeIdMap){
 		//针对通路(pairpath)设计，不能用于其他地方(会报错)
 		//录入起点
-		nodes=new ArrayList<>();
-		edges=new ArrayList<>();
-		Node node=record.get(0).asNode();
-		GraphNode graphNode1=new GraphNode();
-		graphNode1.setId(node.id());
-		nodes.add(graphNode1);
-		
-		//录入边集，顺便录入点id集
-		for(int i=0;i<record.get(1).size();i++){
-			Relationship relationship=record.get(1).get(i).asRelationship();
-			GraphRelationship graphRelationship=new GraphRelationship();
-			graphRelationship.setId(relationship.id());
-			edges.add(graphRelationship);
-			if(i!=record.get(1).size()-1){
-				GraphNode graphNode2=new GraphNode();
-				graphNode2.setId(relationship.endNodeId());
-				nodes.add(graphNode2);
-			}
-		}
-		
-		//录入终点
-		node=record.get(2).asNode();
-		GraphNode graphNode2=new GraphNode();
-		graphNode2.setId(node.id());
-		nodes.add(graphNode2);
-	}
-	
-	public void setRevPath(Record record){
+		/* record.get(0).size()路径的条数
+		 * record.get(0).get(i).asPath().nodes() 第i条路径的路数(type类型的个数)
+		 * record.get(0).get(i).asPath().relationships() 第i条路径的第j个三元组
+		 */
 		nodes=new ArrayList<>();
 		edges=new ArrayList<>();
 		
-		Node node=record.get(2).asNode();
-		GraphNode graphNode1=new GraphNode();
-		graphNode1.setId(node.id());
-		nodes.add(graphNode1);
-		
-		//录入边集，顺便录入点id集
-		for(int i=record.get(1).size()-1;i>=0;i--){
-			Relationship relationship=record.get(1).get(i).asRelationship();
-			GraphRelationship graphRelationship=new GraphRelationship();
-			graphRelationship.setId(relationship.id());
-			edges.add(graphRelationship);
-			if(i!=0){
-				GraphNode graphNode2=new GraphNode();
-				graphNode2.setId(relationship.endNodeId());
-				nodes.add(graphNode2);
+		for(int i=0;i<record.get(0).size();i++){
+			for(Node node:record.get(0).get(i).asPath().nodes()){
+				ArrayList<Integer> labels=new ArrayList<>();
+				Map<String,Object> properties=new HashMap<>();
+				for(String key:node.labels()){
+					labels.add(labelIdMap.get(key));
+				}
+				for(String key:node.keys()){
+					properties.put(key,node.get(key));
+				}
+				GraphNode graphNode=new GraphNode();
+				graphNode.setId(node.id());
+				graphNode.setLabels(labels);
+				graphNode.setProperties(properties);
+			}
+			for(Relationship relationship:record.get(0).get(i).asPath().relationships()){
+				Map<String,Object> properties=new HashMap<>();
+				for(String key:relationship.keys()){
+					properties.put(key,relationship.get(key));
+				}
+				GraphRelationship graphRelationship=new GraphRelationship();
+				graphRelationship.setId(relationship.id());
+				graphRelationship.setType(typeIdMap.get(relationship.type()));
+				graphRelationship.setFromNode(relationship.startNodeId());
+				graphRelationship.setToNode(relationship.endNodeId());
+				graphRelationship.setProperties(properties);
 			}
 		}
 		
-		//录入终点
-		node=record.get(0).asNode();
-		GraphNode graphNode2=new GraphNode();
-		graphNode2.setId(node.id());
-		nodes.add(graphNode2);
+	}
+	
+	public void setRevPath(Record record,Map<String,Integer> labelIdMap,Map<String,Integer> typeIdMap){
+		nodes=new ArrayList<>();
+		edges=new ArrayList<>();
+		
+		for(int i=0;i<record.get(0).size();i++){
+			ArrayList<Node> revnodes=new ArrayList<>();
+			ArrayList<Relationship> revrelationship=new ArrayList<>();
+			for(Node node:record.get(0).get(i).asPath().nodes()){
+				revnodes.add(0,node);
+			}
+			for(Relationship relationship:record.get(0).get(i).asPath().relationships()){
+				revrelationship.add(0,relationship);
+			}
+			for(Node node:revnodes){
+				ArrayList<Integer> labels=new ArrayList<>();
+				Map<String,Object> properties=new HashMap<>();
+				for(String key:node.labels()){
+					labels.add(labelIdMap.get(key));
+				}
+				for(String key:node.keys()){
+					properties.put(key,node.get(key));
+				}
+				GraphNode graphNode=new GraphNode();
+				graphNode.setId(node.id());
+				graphNode.setLabels(labels);
+				graphNode.setProperties(properties);
+			}
+			for(Relationship relationship:revrelationship){
+				Map<String,Object> properties=new HashMap<>();
+				for(String key:relationship.keys()){
+					properties.put(key,relationship.get(key));
+				}
+				GraphRelationship graphRelationship=new GraphRelationship();
+				graphRelationship.setId(relationship.id());
+				graphRelationship.setType(typeIdMap.get(relationship.type()));
+				graphRelationship.setFromNode(relationship.startNodeId());
+				graphRelationship.setToNode(relationship.endNodeId());
+				graphRelationship.setProperties(properties);
+			}
+		}
 		
 	}
 	
-	public void setOnePath(Record record){
+	public void setOnePath(Record record,Map<String,Integer> labelIdMap,Map<String,Integer> typeIdMap){
 		nodes=new ArrayList<>();
 		edges=new ArrayList<>();
 		//适用于ERPS和EEPS的选举
@@ -91,10 +116,32 @@ public class GraphPath {
 		Relationship relationship=record.get(1).asRelationship();
 		
 		GraphNode graphNode1=new GraphNode();
+		ArrayList<Integer> labels=new ArrayList<>();
+		Map<String,Object> properties=new HashMap<>();
+		for(String Alabel:node1.labels()){
+			labels.add(labelIdMap.get(Alabel));
+		}
+		for(String Aproperty:node1.keys()){
+			properties.put(Aproperty,node1.get(Aproperty));
+		}
+		graphNode1.setLabels(labels);
+		graphNode1.setProperties(properties);
+		graphNode1.setId(node1.id());
+		labels.clear();
+		properties.clear();
+		
 		GraphNode graphNode2=new GraphNode();
 		GraphRelationship graphRelationship=new GraphRelationship();
-		graphNode1.setId(node1.id());
+		for(String Alabel:node2.labels()){
+			labels.add(labelIdMap.get(Alabel));
+		}
+		for(String Aproperty:node2.keys()){
+			properties.put(Aproperty,node2.get(Aproperty));
+		}
+		graphNode2.setLabels(labels);
+		graphNode2.setProperties(properties);
 		graphNode2.setId(node2.id());
+		properties.clear();
 		
 		if(relationship.startNodeId()==node1.id()){
 			nodes.add(graphNode1);
@@ -104,17 +151,23 @@ public class GraphPath {
 			nodes.add(graphNode2);
 			nodes.add(graphNode1);
 		}
+		for(String Aproperty:relationship.keys()){
+			properties.put(Aproperty,relationship.get(Aproperty));
+		}
 		graphRelationship.setId(relationship.id());
-		
+		graphRelationship.setType(typeIdMap.get(relationship.type()));
+		graphRelationship.setFromNode(relationship.startNodeId());
+		graphRelationship.setToNode(relationship.endNodeId());
+		graphRelationship.setProperties(properties);
 		
 		edges.add(graphRelationship);
 	}
 	public void setTypeAndLabels(Map<Long,ArrayList<String>> idLabelMap,Map<String,Integer> labelIntMap,Map<Long,String> idTypeMap,Map<String,Integer> typeIntMap){
 		for(GraphNode g1:nodes){
-			g1.setLabelsById(idLabelMap, labelIntMap);
+			g1.setLabelsById(idLabelMap,labelIntMap);
 		}
 		for(GraphRelationship r1:edges){
-			r1.setTypeById(idTypeMap, typeIntMap);
+			r1.setTypeById(idTypeMap,typeIntMap);
 		}
 	}
 	

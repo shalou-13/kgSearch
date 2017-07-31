@@ -62,6 +62,12 @@ public class MatchTags {
 		if(this.nounMatchList!=null)
 			this.nounMatchList.add(tag);
 	}
+	
+	public void addNounLabelMatchTag(String tag){
+		if(this.nounLabelMatchList!=null)
+			this.nounLabelMatchList.add(tag);
+	}
+	
 	public ArrayList<String> getNounLabelMatchList() {
 		return nounLabelMatchList;
 	}
