@@ -243,75 +243,111 @@ public class ReNeo4jHandler extends GraphHandler{
 
 	@Override
 	public ArrayList<GraphNode> searchGraphNodeByNoun() {
-		// TODO Auto-generated method stub
+		ArrayList<GraphNode> NEL = new ArrayList<>();
+		ArrayList<GraphNode> NEL1 = searchMovieGraphNodeByNone();
+		ArrayList<GraphNode> NEL2 = searchPersonGraphNodeByNone();
+		if(NEL1!=null)
+			NEL.addAll(NEL1);
+		if(NEL2!=null)
+			NEL.addAll(NEL2);
+		if(NEL.size()!=0)
+			return NEL;
+		return NEL;
+	}
+	
+	
+	public ArrayList<GraphNode> searchMovieGraphNodeByNone(){
 		ArrayList<GraphNode> NEL=new ArrayList<>();
-		Set<Long> idOfNELL=new HashSet<>();
-		ArrayList<LabelProperties> all=(ArrayList<LabelProperties>)labelPropertiesService.selectAll();
-		for(LabelProperties Alp:all){
-			for(String Anoun:this.getNounList()){
-				boolean flag=false;
-				String where="";
-				if(Alp.getProperties()!=null){
-					for(String Aproperty:Alp.getProperties().split(",")){
-						if(flag==true){
-							where+=" or x."+Aproperty+" contains "+"'"+Anoun+"'";
-						}
-						else{
-							where+=" x."+Aproperty+" contains "+"'"+Anoun+"'";
-							flag=true;
-						}
-					}
-				}
-				if(flag==true){
-					try{
-						StatementResult statementResult=session.run("match (x:"+Alp.getLabel()+") where "+where+" return x");
-						while(statementResult.hasNext()){
-							Record record=statementResult.next();
-							Node node=record.get(0).asNode();
-							if(idOfNELL.contains(node.id())==false){
-								ArrayList<Integer> labels=new ArrayList<>();
-								Map<String,Object> properties=new HashMap<>();
-								MatchTags matchTags=new MatchTags();
-								for(String Alabel:node.labels()){
-									labels.add(labelIdMap.get(Alabel));
-								}
-								for(String key:node.keys()){
-									properties.put(key,node.get(key));
-								}
-								matchTags.setNounMatch(true);
-								matchTags.setNounMatchList(new ArrayList<>());
-								matchTags.addNounMatchTag(Anoun);
-								GraphNode graphNode=new GraphNode();
-								graphNode.setId(node.id());
-								graphNode.setWeight(1);
-								graphNode.setLabels(labels);
-								graphNode.setMatchTag(matchTags);
-								graphNode.setProperties(properties);
-								idOfNELL.add(node.id());
-								NEL.add(graphNode);
-							}
-							else{
-								for(GraphNode graphNode:NEL){
-									if(graphNode.getId()==node.id()){
-										graphNode.setWeight(graphNode.getWeight()+1);
-										graphNode.getMatchTag().addNounMatchTag(Anoun);
-									}
-								}
-							}
-						}
-					}
-					catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
+		boolean flag=false;
+		String where="";
+		for(String Anoun:this.getNounList()){
+			if(flag){
+				where+=" or x.title contains "+"'"+Anoun+"'";
+			}
+			else{
+				where+=" x.title contains "+"'"+Anoun+"'";
+				flag=true;
 			}
 		}
-		System.out.println("NEL:");
-		for(GraphNode graphNode:NEL){
-			System.out.print(graphNode.getId()+" ");
+		try{
+			StatementResult statementResult=session.run("match (x:Movie) where "+where+" return x");
+			while(statementResult.hasNext()){
+				Record record=statementResult.next();
+				Node node=record.get(0).asNode();
+				ArrayList<Integer> labels=new ArrayList<>();
+				Map<String,Object> properties=new HashMap<>();
+				MatchTags matchTags=new MatchTags();
+				for(String Alabel:node.labels()){
+					labels.add(labelIdMap.get(Alabel));
+				}
+				for(String key:node.keys()){
+					properties.put(key,node.get(key));
+				}
+				matchTags.setNounMatch(true);
+				matchTags.setNounMatchList(new ArrayList<>());
+				matchTags.addNounMatchTag(node.get("title").asString());
+				GraphNode graphNode=new GraphNode();
+				graphNode.setId(node.id());
+				graphNode.setWeight(1);
+				graphNode.setLabels(labels);
+				graphNode.setMatchTag(matchTags);
+				graphNode.setProperties(properties);
+				NEL.add(graphNode);
+			}
 		}
-		System.out.print("\n");
-		return NEL;
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		if(NEL.size()!=0)
+			return NEL;
+		return null;
+	}
+	
+	public ArrayList<GraphNode> searchPersonGraphNodeByNone(){
+		ArrayList<GraphNode> NEL=new ArrayList<>();
+		boolean flag=false;
+		String where="";
+		for(String Anoun:this.getNounList()){
+			if(flag){
+				where+=" or x.name contains "+"'"+Anoun+"'";
+			}
+			else{
+				where+=" x.name contains "+"'"+Anoun+"'";
+				flag=true;
+			}
+		}
+		try{
+			StatementResult statementResult=session.run("match (x:Person) where "+where+" return x");
+			while(statementResult.hasNext()){
+				Record record=statementResult.next();
+				Node node=record.get(0).asNode();
+				ArrayList<Integer> labels=new ArrayList<>();
+				Map<String,Object> properties=new HashMap<>();
+				MatchTags matchTags=new MatchTags();
+				for(String Alabel:node.labels()){
+					labels.add(labelIdMap.get(Alabel));
+				}
+				for(String key:node.keys()){
+					properties.put(key,node.get(key));
+				}
+				matchTags.setNounMatch(true);
+				matchTags.setNounMatchList(new ArrayList<>());
+				matchTags.addNounMatchTag(node.get("name").asString());
+				GraphNode graphNode=new GraphNode();
+				graphNode.setId(node.id());
+				graphNode.setWeight(1);
+				graphNode.setLabels(labels);
+				graphNode.setMatchTag(matchTags);
+				graphNode.setProperties(properties);
+				NEL.add(graphNode);
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		if(NEL.size()!=0)
+			return NEL;
+		return null;
 	}
 
 	@Override
