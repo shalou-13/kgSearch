@@ -21,15 +21,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.kgSearch.dao.ChildrenMissionsMapper;
 import com.kgSearch.dao.MissionsMapper;
 import com.kgSearch.method.impl.CustomerNeo4jHandler;
 import com.kgSearch.method.impl.ReNeo4jHandler;
 import com.kgSearch.pojo.ChildrenMissions;
+import com.kgSearch.pojo.ChildrenMissionsWithBLOBs;
 import com.kgSearch.pojo.LabelProperties;
 import com.kgSearch.pojo.MissionsWithBLOBs;
 import com.kgSearch.pojo.TypeProperties;
+import com.kgSearch.service.impl.ChildrenMissionService;
 import com.kgSearch.service.impl.LabelService;
 import com.kgSearch.service.impl.RelationTypeService;
 import com.kgSearch.util.JsonHandler;
@@ -45,7 +47,7 @@ public class GraphSearchController {
 	@Autowired
 	private RelationTypeService relationTypeService;
 	@Resource
-	private ChildrenMissionsMapper childrenMissionsMapper;
+	private ChildrenMissionService childrenMissionService;
 	@Resource
 	private MissionsMapper missionsMapper;
 	
@@ -87,7 +89,7 @@ public class GraphSearchController {
 		String typeID = obj.getString("typeID");
 		String engine = obj.getString("engine");
 		int subMissionID = obj.getIntValue("subMissionID");
-		ChildrenMissions sub_mission = childrenMissionsMapper.selectByPrimaryKey(subMissionID);
+		ChildrenMissions sub_mission = childrenMissionService.GetChildMissionById(subMissionID);
 		if(sub_mission==null)
 			return JsonHandler.writeJsontoResponse(4002, "");
 		MissionsWithBLOBs mission = missionsMapper.selectByPrimaryKey(sub_mission.getPId());
@@ -133,6 +135,10 @@ public class GraphSearchController {
 					result.put("EL", reNeo4jHandler.getEL());
 					result.put("graphID", graphID);
 					result.put("graphTypeID", typeID);
+					ChildrenMissionsWithBLOBs childrenMission = new ChildrenMissionsWithBLOBs();
+					childrenMission.setId(subMissionID);
+					childrenMission.setResult(JSON.toJSONString(result));
+					childrenMissionService.updateByPrimaryKeyWithBLOBs(childrenMission);
 					return JsonHandler.writeJsontoResponse(4000, result);
 				}
 				return JsonHandler.writeJsontoResponse(4004, "");
@@ -159,7 +165,7 @@ public class GraphSearchController {
 		String typeID = obj.getString("typeID");
 		String engine = obj.getString("engine");
 		int subMissionID = obj.getIntValue("subMissionID");
-		ChildrenMissions sub_mission = childrenMissionsMapper.selectByPrimaryKey(subMissionID);
+		ChildrenMissions sub_mission = childrenMissionService.GetChildMissionById(subMissionID);
 		if(sub_mission==null)
 			return JsonHandler.writeJsontoResponse(4002, "");
 		MissionsWithBLOBs mission = missionsMapper.selectByPrimaryKey(sub_mission.getPId());
@@ -205,6 +211,10 @@ public class GraphSearchController {
 					result.put("EL", reNeo4jHandler.getEL());
 					result.put("graphID", graphID);
 					result.put("graphTypeID", typeID);
+					ChildrenMissionsWithBLOBs childrenMission = new ChildrenMissionsWithBLOBs();
+					childrenMission.setId(subMissionID);
+					childrenMission.setResult(JSON.toJSONString(result));
+					childrenMissionService.updateByPrimaryKeyWithBLOBs(childrenMission);
 					return JsonHandler.writeJsontoResponse(4000, result);
 				}
 				return JsonHandler.writeJsontoResponse(4004, ""); 
