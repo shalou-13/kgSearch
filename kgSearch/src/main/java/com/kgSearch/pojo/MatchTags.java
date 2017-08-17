@@ -59,12 +59,15 @@ public class MatchTags {
 	}
 	
 	public void addNounMatchTag(String tag){
-		if(this.nounMatchList!=null)
-			this.nounMatchList.add(tag);
+		if(this.nounMatchList==null)
+			this.nounMatchList = new ArrayList<String>();
+		this.nounMatchList.add(tag);
+			
 	}
 	
 	public void addNounLabelMatchTag(String tag){
-		if(this.nounLabelMatchList!=null)
+		if(this.nounLabelMatchList==null)
+			this.nounLabelMatchList = new ArrayList<String>();
 			this.nounLabelMatchList.add(tag);
 	}
 	

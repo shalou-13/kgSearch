@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kgSearch.dao.MissionsMapper">
+  <resultMap id="BaseResultMap" type="com.kgSearch.pojo.Missions">
+    <id column="Id" jdbcType="INTEGER" property="id" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="addTime" jdbcType="TIMESTAMP" property="addTime" />
+    <result column="finishTime" jdbcType="TIMESTAMP" property="finishTime" />
+  	<result column="userID" jdbcType="INTEGER" property="userID" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.kgSearch.pojo.MissionsWithBLOBs">
+    <result column="Rkeyword" jdbcType="LONGVARCHAR" property="rkeyword" />
+    <result column="Nkeyword" jdbcType="LONGVARCHAR" property="nkeyword" />
+    <result column="Vkeyword" jdbcType="LONGVARCHAR" property="vkeyword" />
+    <result column="Akeyword" jdbcType="LONGVARCHAR" property="akeyword" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    Id, state, addTime, finishTime, userID
+  </sql>
+  <sql id="Blob_Column_List">
+    Rkeyword, Nkeyword, Vkeyword, Akeyword
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from missiontable
+    where Id = #{id,jdbcType=INTEGER}
+  </select>
+    <select id="selectAllMissions" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from missiontable
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from missiontable
+    where Id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.kgSearch.pojo.MissionsWithBLOBs">
+    insert into missiontable (state, addTime, 
+      finishTime, userID, Rkeyword, 
+      Nkeyword, Vkeyword, Akeyword
+      )
+    values (#{state,jdbcType=INTEGER}, #{addTime,jdbcType=TIMESTAMP}, 
+      #{finishTime,jdbcType=TIMESTAMP}, #{userID,jdbcType=INTEGER}, #{rkeyword,jdbcType=LONGVARCHAR}, 
+      #{nkeyword,jdbcType=LONGVARCHAR}, #{vkeyword,jdbcType=LONGVARCHAR}, #{akeyword,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.kgSearch.pojo.MissionsWithBLOBs">
+    insert into missiontable
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="state != null">
+        state,
+      </if>
+      <if test="addTime != null">
+        addTime,
+      </if>
+      <if test="finishTime != null">
+        finishTime,
+      </if>
+      <if test="userID != null">
+        userID,
+      </if>
+      <if test="rkeyword != null">
+        Rkeyword,
+      </if>
+      <if test="nkeyword != null">
+        Nkeyword,
+      </if>
+      <if test="vkeyword != null">
+        Vkeyword,
+      </if>
+      <if test="akeyword != null">
+        Akeyword,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="state != null">
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null">
+        #{addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="finishTime != null">
+        #{finishTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userID != null">
+        #{userID,jdbcType=INTEGER},
+      </if>
+      <if test="rkeyword != null">
+        #{rkeyword,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="nkeyword != null">
+        #{nkeyword,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="vkeyword != null">
+        #{vkeyword,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="akeyword != null">
+        #{akeyword,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.kgSearch.pojo.MissionsWithBLOBs">
+    update missiontable
+    <set>
+      <if test="state != null">
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null">
+        addTime = #{addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="finishTime != null">
+        finishTime = #{finishTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userID != null">
+        #{userID,jdbcType=INTEGER},
+      </if>
+      <if test="rkeyword != null">
+        Rkeyword = #{rkeyword,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="nkeyword != null">
+        Nkeyword = #{nkeyword,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="vkeyword != null">
+        Vkeyword = #{vkeyword,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="akeyword != null">
+        Akeyword = #{akeyword,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where Id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.kgSearch.pojo.MissionsWithBLOBs">
+    update missiontable
+    set state = #{state,jdbcType=INTEGER},
+      addTime = #{addTime,jdbcType=TIMESTAMP},
+      finishTime = #{finishTime,jdbcType=TIMESTAMP},
+      userID = #{userID,jdbcType=INTEGER},
+      Rkeyword = #{rkeyword,jdbcType=LONGVARCHAR},
+      Nkeyword = #{nkeyword,jdbcType=LONGVARCHAR},
+      Vkeyword = #{vkeyword,jdbcType=LONGVARCHAR},
+      Akeyword = #{akeyword,jdbcType=LONGVARCHAR}
+    where Id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.kgSearch.pojo.Missions">
+    update missiontable
+    set state = #{state,jdbcType=INTEGER},
+      addTime = #{addTime,jdbcType=TIMESTAMP},
+      finishTime = #{finishTime,jdbcType=TIMESTAMP}
+      userID = #{userID,jdbcType=INTEGER}
+    where Id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

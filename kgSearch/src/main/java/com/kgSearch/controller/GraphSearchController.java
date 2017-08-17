@@ -1,8 +1,10 @@
 package com.kgSearch.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -19,11 +21,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSONObject;
+import com.kgSearch.dao.ChildrenMissionsMapper;
+import com.kgSearch.dao.MissionsMapper;
+import com.kgSearch.method.impl.ReNeo4jHandler;
+import com.kgSearch.pojo.ChildrenMissions;
+import com.kgSearch.pojo.MissionsWithBLOBs;
 import com.kgSearch.util.JsonHandler;
 
 @Controller
 public class GraphSearchController {
 	
+	@Resource
+	private ReNeo4jHandler reNeo4jHandler;
+	@Resource
+	private ChildrenMissionsMapper childrenMissionsMapper;
+	@Resource
+	private MissionsMapper missionsMapper;
 	
 	
 	@RequestMapping("/testSearch")
@@ -50,8 +63,82 @@ public class GraphSearchController {
 			e.printStackTrace();
 		}
 		
-		return JsonHandler.writeJsontoResponse(3000, list);
+		return JsonHandler.writeJsontoResponse(4000, list);
 	}
 	
 
+	@RequestMapping("/movieSearch")
+	@ResponseBody
+	public Map<String, Object> movieSearch(HttpServletRequest request, HttpServletResponse response){
+		String jsonStr = JsonHandler.readJsonFromRequest(request);
+		JSONObject obj = JSONObject.parseObject(jsonStr);
+		String graphID = obj.getString("graphID");
+		String typeID = obj.getString("typeID");
+		String engine = obj.getString("engine");
+		int subMissionID = obj.getIntValue("subMissionID");
+		ChildrenMissions sub_mission = childrenMissionsMapper.selectByPrimaryKey(subMissionID);
+		if(sub_mission==null)
+			return JsonHandler.writeJsontoResponse(4002, "");
+		MissionsWithBLOBs mission = missionsMapper.selectByPrimaryKey(sub_mission.getPId());
+		ArrayList<String> verbList=new ArrayList<>();
+		ArrayList<String> adList=new ArrayList<>();
+		ArrayList<String> nounList=new ArrayList<>();
+		if(mission.getAkeyword()!=null && !mission.getAkeyword().equals("")){
+			JSONObject a_obj = JSONObject.parseObject(mission.getAkeyword());  
+			adList = new ArrayList<String>(a_obj.keySet());
+		}
+		if(mission.getNkeyword()!=null && !mission.getNkeyword().equals("")){
+			JSONObject n_obj = JSONObject.parseObject(mission.getNkeyword());  
+			nounList = new ArrayList<String>(n_obj.keySet());
+		}
+		if(mission.getVkeyword()!=null && !mission.getVkeyword().equals("")){
+			JSONObject v_obj = JSONObject.parseObject(mission.getVkeyword());  
+			verbList = new ArrayList<String>(v_obj.keySet());
+		}
+		if(verbList.size()!=0||adList.size()!=0||nounList.size()!=0){
+			reNeo4jHandler.setVerbList(verbList);
+			reNeo4jHandler.setAdList(adList);
+			reNeo4jHandler.setNounList(nounList);
+			Class<?> c;
+			try {
+				c = Class.forName(engine);
+				Object graphHandler = c.newInstance();
+				if(graphHandler instanceof ReNeo4jHandler){
+					Driver driver=GraphDatabase.driver("bolt://localhost",AuthTokens.basic("neo4j","123456"));
+					reNeo4jHandler.setEEL(null);
+					reNeo4jHandler.setEL(null);
+					reNeo4jHandler.setELL(null);
+					reNeo4jHandler.setRTL(null);
+					reNeo4jHandler.setTResult(null);
+					reNeo4jHandler.setSResult(null);
+					reNeo4jHandler.setSub_EL(null);
+					reNeo4jHandler.setSub_ELL(null);
+					reNeo4jHandler.setSub_RTL(null);
+					reNeo4jHandler.initSession(driver);
+					reNeo4jHandler.initIdMap();
+					reNeo4jHandler.searchAction();
+					HashMap<String, Object> result = new HashMap<String, Object>();
+					result.put("TResult", reNeo4jHandler.getTResult());
+					result.put("SResult", reNeo4jHandler.getSResult());
+					result.put("sub_RTL", reNeo4jHandler.getSub_RTL());
+					result.put("sub_ELL", reNeo4jHandler.getSub_ELL());
+					result.put("sub_EL", reNeo4jHandler.getSub_EL());
+					result.put("RTL", reNeo4jHandler.getRTL());
+					result.put("ELL", reNeo4jHandler.getELL());
+					result.put("EL", reNeo4jHandler.getEL());
+					return JsonHandler.writeJsontoResponse(4000, result);
+				}
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+				return JsonHandler.writeJsontoResponse(4003, "");
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+				return JsonHandler.writeJsontoResponse(4004, "");
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+				return JsonHandler.writeJsontoResponse(4005, "");
+			}
+		}
+		return JsonHandler.writeJsontoResponse(4005, "");
+	}
 }

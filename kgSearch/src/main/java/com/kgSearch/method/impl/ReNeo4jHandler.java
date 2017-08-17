@@ -275,20 +275,19 @@ public class ReNeo4jHandler extends GraphHandler{
 				Record record=statementResult.next();
 				Node node=record.get(0).asNode();
 				ArrayList<Integer> labels=new ArrayList<>();
-				Map<String,Object> properties=new HashMap<>();
+				Map<String,Object> properties=node.asMap();
 				MatchTags matchTags=new MatchTags();
 				for(String Alabel:node.labels()){
 					labels.add(labelIdMap.get(Alabel));
 				}
-				for(String key:node.keys()){
-					properties.put(key,node.get(key));
-				}
 				matchTags.setNounMatch(true);
-				matchTags.setNounMatchList(new ArrayList<>());
-				matchTags.addNounMatchTag(node.get("title").asString());
+				for(String Anoun:this.getNounList()){
+					if(node.get("title").asString().indexOf(Anoun)>=0)
+						matchTags.addNounMatchTag(Anoun);
+				}
 				GraphNode graphNode=new GraphNode();
 				graphNode.setId(node.id());
-				graphNode.setWeight(1);
+				graphNode.setWeight(matchTags.getNounMatchList().size());
 				graphNode.setLabels(labels);
 				graphNode.setMatchTag(matchTags);
 				graphNode.setProperties(properties);
@@ -298,6 +297,11 @@ public class ReNeo4jHandler extends GraphHandler{
 		catch (Exception e) {
 			e.printStackTrace();
 		}
+		System.out.println("mEL:");
+		for(GraphNode graphNode:NEL){
+			System.out.print(graphNode.getProperties().toString()+" ");
+		}
+		System.out.print("\n");
 		if(NEL.size()!=0)
 			return NEL;
 		return null;
@@ -322,20 +326,19 @@ public class ReNeo4jHandler extends GraphHandler{
 				Record record=statementResult.next();
 				Node node=record.get(0).asNode();
 				ArrayList<Integer> labels=new ArrayList<>();
-				Map<String,Object> properties=new HashMap<>();
+				Map<String,Object> properties=node.asMap();
 				MatchTags matchTags=new MatchTags();
 				for(String Alabel:node.labels()){
 					labels.add(labelIdMap.get(Alabel));
 				}
-				for(String key:node.keys()){
-					properties.put(key,node.get(key));
-				}
 				matchTags.setNounMatch(true);
-				matchTags.setNounMatchList(new ArrayList<>());
-				matchTags.addNounMatchTag(node.get("name").asString());
+				for(String Anoun:this.getNounList()){
+					if(node.get("name").asString().indexOf(Anoun)>=0)
+						matchTags.addNounMatchTag(Anoun);
+				}
 				GraphNode graphNode=new GraphNode();
 				graphNode.setId(node.id());
-				graphNode.setWeight(1);
+				graphNode.setWeight(matchTags.getNounMatchList().size());
 				graphNode.setLabels(labels);
 				graphNode.setMatchTag(matchTags);
 				graphNode.setProperties(properties);
@@ -345,6 +348,11 @@ public class ReNeo4jHandler extends GraphHandler{
 		catch (Exception e) {
 			e.printStackTrace();
 		}
+		System.out.println("pEL:");
+		for(GraphNode graphNode:NEL){
+			System.out.print(graphNode.getProperties().toString()+" ");
+		}
+		System.out.print("\n");
 		if(NEL.size()!=0)
 			return NEL;
 		return null;
@@ -352,20 +360,20 @@ public class ReNeo4jHandler extends GraphHandler{
 
 	@Override
 	public ArrayList<GraphPath> searchNodePairPath(ArrayList<GraphNode> EL) {
-		ArrayList<GraphPath> EPPS=new ArrayList<>(); 
+		ArrayList<GraphPath> EPPS=new ArrayList<GraphPath>(); 
 		for(int i=0;i<EL.size();i++){
 			for(int j=i+1;j<EL.size();j++){
 				GraphNode g1=EL.get(i);
 				GraphNode g2=EL.get(j);
 				try{
-					StatementResult statementResult=session.run("match (x),(y) where id(x)="+g1.getId()+" and id(y)="+g2.getId()+" return ((x)-[*]->(y))");
+					StatementResult statementResult=session.run("match p = ((x)-[*]->(y)) where id(x)="+g1.getId()+" and id(y)="+g2.getId()+" return p");
 					while(statementResult.hasNext()){
 						Record record=statementResult.next();
 						GraphPath graphPath=new GraphPath();
 						graphPath.setPath(record,labelIdMap,typeIdMap);
 						EPPS.add(graphPath);
 					}
-					statementResult=session.run("match (x),(y) where id(x)="+g1.getId()+" and id(y)="+g2.getId()+" return ((x)<-[*]-(y))");
+					statementResult=session.run("match p = ((y)-[*]->(x)) where id(x)="+g1.getId()+" and id(y)="+g2.getId()+" return p");
 					while(statementResult.hasNext()){
 						Record record=statementResult.next();
 						GraphPath graphPath=new GraphPath();
@@ -378,13 +386,6 @@ public class ReNeo4jHandler extends GraphHandler{
 				}
 			}
 		}
-		System.out.println("EPPS:");
-		for(GraphPath graphPath:EPPS){
-			for(GraphNode graphNode:graphPath.getNodes()){
-				System.out.print(graphNode.getId()+" ");
-			}
-		}
-		System.out.print("\n");
 		return EPPS;
 	}
 
@@ -394,11 +395,11 @@ public class ReNeo4jHandler extends GraphHandler{
 		for(GraphNode node:nodes){
 			for(GraphNodeLabel graphNodeLabel:ELL){
 				try{
-					StatementResult statementResult=session.run("match (x)-[y]-(z:"+graphNodeLabel.getLabelName()+") where id(x)="+node.getId()+" return x,y,z");
+					StatementResult statementResult=session.run("match p = ((x)-[y]-(z:"+graphNodeLabel.getLabelName()+")) where id(x)="+node.getId()+" return p");
 					while(statementResult.hasNext()){
 						Record record=statementResult.next();
 						GraphPath graphPath=new GraphPath();
-						graphPath.setOnePath(record, labelIdMap, typeIdMap);
+						graphPath.setPath(record, labelIdMap, typeIdMap);
 						EEPS.add(graphPath);
 					}
 				}
@@ -412,23 +413,23 @@ public class ReNeo4jHandler extends GraphHandler{
 			for(GraphNode graphNode:graphPath.getNodes()){
 				System.out.print(graphNode.getId()+" ");
 			}
+			System.out.println("---");
 		}
 		System.out.print("\n");
 		return EEPS;
 	}
 
 	@Override
-	public ArrayList<GraphPath> searchNodeRelationTypePath(ArrayList<GraphNode> nodes,
-			ArrayList<GraphRelationshipType> RTL) {
+	public ArrayList<GraphPath> searchNodeRelationTypePath(ArrayList<GraphNode> nodes, ArrayList<GraphRelationshipType> RTL) {
 		ArrayList<GraphPath> ERPS=new ArrayList<>();
 		for(GraphNode node:nodes){
 			for(GraphRelationshipType type:RTL){
 				try{
-					StatementResult statementResult=session.run("match (x)-[y:"+type.getTypeName()+"]-(z) where id(x)="+node.getId()+" return x,y,z");
+					StatementResult statementResult=session.run("match p=((x)-[y:"+type.getTypeName()+"]-(z)) where id(x)="+node.getId()+" return p");
 					while(statementResult.hasNext()){
 						Record record=statementResult.next();
 						GraphPath graphPath=new GraphPath();
-						graphPath.setOnePath(record, labelIdMap, typeIdMap);
+						graphPath.setPath(record, labelIdMap, typeIdMap);
 						ERPS.add(graphPath);
 					}
 				}
@@ -455,14 +456,14 @@ public class ReNeo4jHandler extends GraphHandler{
 				GraphNode g1=sub_EL.get(i);
 				GraphNode g2=EEL.get(j);
 				try{
-					StatementResult statementResult=session.run("match (x),(y) where id(x)="+g1.getId()+" and id(y)="+g2.getId()+" return ((x)-[*]->(y))");
+					StatementResult statementResult=session.run("match p = ((x)-[*]->(y)) where id(x)="+g1.getId()+" and id(y)="+g2.getId()+" return p");
 					while(statementResult.hasNext()){
 						Record record=statementResult.next();
 						GraphPath graphPath=new GraphPath();
 						graphPath.setPath(record,labelIdMap,typeIdMap);
 						EPPS.add(graphPath);
 					}
-					statementResult=session.run("match (x),(y) where id(x)="+g1.getId()+" and id(y)="+g2.getId()+" return ((x)<-[*]-(y))");
+					statementResult=session.run("match p = ((y)-[*]->(x)) where id(x)="+g1.getId()+" and id(y)="+g2.getId()+" return p");
 					while(statementResult.hasNext()){
 						Record record=statementResult.next();
 						GraphPath graphPath=new GraphPath();
@@ -486,32 +487,21 @@ public class ReNeo4jHandler extends GraphHandler{
 	}
 
 	@Override
-	public ArrayList<GraphPathPattern> searchPattern(ArrayList<GraphNodeLabel> sub_ELL,
-			ArrayList<GraphRelationshipType> sub_RTL) {
-		// TODO Auto-generated method stub
-		if(sub_ELL==null||sub_RTL==null){
-			System.out.println("sub_ELL or sub_RTL=null");
-			return null;
-		}
+	public ArrayList<GraphPathPattern> searchPattern(ArrayList<GraphNodeLabel> sub_ELL, ArrayList<GraphRelationshipType> sub_RTL) {
 		ArrayList<GraphPathPattern> SResult=new ArrayList<>();
 		for(GraphNodeLabel graphNodeLabel:sub_ELL){
 			for(GraphRelationshipType graphRelationshipType:sub_RTL){
 				try{
 					StatementResult statementResult=session.run("match (x:"+graphNodeLabel.getLabelName()+")-[y:"+graphRelationshipType.getTypeName()+"]->(z) return x,y");
-					while(statementResult.hasNext()){
-						@SuppressWarnings("unused")
-						Record record=statementResult.next();
+					if(statementResult.list().size()!=0){
 						GraphPathPattern graphPathPattern=new GraphPathPattern();
 						graphPathPattern.setLabel(graphNodeLabel);
 						graphPathPattern.setRelationType(graphRelationshipType);
 						graphPathPattern.setDirection(0);
 						SResult.add(graphPathPattern);
-						
 					}
 					statementResult=session.run("match (x:"+graphNodeLabel.getLabelName()+")<-[y:"+graphRelationshipType.getTypeName()+"]-(z) return x,y");
-					while(statementResult.hasNext()){
-						@SuppressWarnings("unused")
-						Record record=statementResult.next();
+					if(statementResult.list().size()!=0){
 						GraphPathPattern graphPathPattern=new GraphPathPattern();
 						graphPathPattern.setLabel(graphNodeLabel);
 						graphPathPattern.setRelationType(graphRelationshipType);

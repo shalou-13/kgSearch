@@ -82,25 +82,33 @@ public class GraphHandler {
 		setELL(nELL, aELL);
 		setEL(this.ELL, EL);
 		if(this.EL!=null){
-			ArrayList<GraphPath> EPPS = searchNodePairPath(this.EL);
-			ArrayList<GraphPath> EEPS = searchNodeLabelPath(this.EL, this.ELL);
-			ArrayList<GraphPath> ERPS = searchNodeRelationTypePath(this.EL, this.RTL);
+			ArrayList<GraphPath> EPPS = null;
+			ArrayList<GraphPath> EEPS = null;
+			ArrayList<GraphPath> ERPS = null;
+			if(this.EL.size()>1)
+				EPPS = searchNodePairPath(this.EL);
+			if(this.ELL!=null)
+				EEPS = searchNodeLabelPath(this.EL, this.ELL);
+			if(this.RTL!=null)
+				ERPS = searchNodeRelationTypePath(this.EL, this.RTL);
 			setTResult(EPPS, EEPS, ERPS);
 		}
 		setEELFromTResult(this.TResult, this.EL, this.ELL, this.EEL);
 		setSub_ELSub_ELLSub_RTLFromTResult(this.TResult, this.EL, this.ELL, this.RTL);
 		extendTResult();
-		ArrayList<GraphPathPattern> SResult = searchPattern(this.sub_ELL, this.sub_RTL);
-		if(SResult!=null)
-			this.SResult = SResult;
-		updateSub_ELLSub_RTLFromSResult();
-		
+		if(this.sub_ELL!=null && this.sub_RTL!=null){
+			ArrayList<GraphPathPattern> SResult = searchPattern(this.sub_ELL, this.sub_RTL);
+			if(SResult!=null && SResult.size()!=0)
+				this.SResult = SResult;
+			updateSub_ELLSub_RTLFromSResult();
+		}
+		updateTResultWeight();
 		
 	}
 	
 	//merge VRTL and ARTL
 	public void setRTL(ArrayList<GraphRelationshipType> vRTL, ArrayList<GraphRelationshipType> aRTL){
-		if(vRTL != null && aRTL != null){
+		if(vRTL != null && vRTL.size()!=0 && aRTL != null && aRTL.size()!=0){
 			ArrayList<GraphRelationshipType> RTL = new ArrayList<GraphRelationshipType>();
 			Map<Integer, GraphRelationshipType> temp = new HashMap<Integer, GraphRelationshipType>();
 			for(GraphRelationshipType t1 : vRTL){
@@ -122,16 +130,16 @@ public class GraphHandler {
 				  RTL.add(value);
 			}  
 			this.RTL = RTL;
-		}else if(vRTL!=null){
+		}else if(vRTL!=null && vRTL.size()!=0){
 			this.RTL = vRTL;
-		}else{
+		}else if(aRTL!=null && aRTL.size()!=0){
 			this.RTL = aRTL;
 		}
 	}
 	
 	//merge NELL and AELL
 	public void setELL(ArrayList<GraphNodeLabel> nELL, ArrayList<GraphNodeLabel> aELL){
-		if(nELL != null && aELL != null){
+		if(nELL != null && nELL.size()!=0 && aELL != null && aELL.size()!=0){
 			ArrayList<GraphNodeLabel> ELL = new ArrayList<GraphNodeLabel>();
 			Map<Integer, GraphNodeLabel> temp = new HashMap<Integer, GraphNodeLabel>();
 			for(GraphNodeLabel l1 : nELL){
@@ -153,16 +161,16 @@ public class GraphHandler {
 				ELL.add(value);
 			}  
 			this.ELL= ELL;
-		}else if(nELL!=null){
+		}else if(nELL!=null && nELL.size()!=0){
 			this.ELL = nELL;
-		}else{
+		}else if(aELL!=null && aELL.size()!=0){
 			this.ELL = aELL;
 		}
 	}
 	
 	//merge ELL and EL
 	public void setEL(ArrayList<GraphNodeLabel> ELL, ArrayList<GraphNode> EL){
-		if(ELL != null && EL != null){
+		if(ELL != null && EL != null && EL.size()!=0){
 			Map<Integer, GraphNodeLabel> temp = new HashMap<Integer, GraphNodeLabel>();
 			for(GraphNodeLabel l1 : ELL){
 				temp.put(l1.getId(), l1);
@@ -183,28 +191,30 @@ public class GraphHandler {
 					}
 				}
 			}
-			ArrayList<GraphNodeLabel> EL_MIN = new ArrayList<GraphNodeLabel>();
+			ArrayList<GraphNodeLabel> ELL_MIN = new ArrayList<GraphNodeLabel>();
 			for (GraphNodeLabel label : ELL) {  
 				  if(!exisit_label.containsKey(label.getId()))
-					  EL_MIN.add(label);
+					  ELL_MIN.add(label);
 			}  
 			this.EL = EL;
-			this.ELL = EL_MIN;
+			this.ELL = ELL_MIN;
+		}else if(EL != null && EL.size()!=0){
+			this.EL = EL;
 		}
 	}
 	
 	//merge EPPS,EEPS,ERPS
 	public void setTResult(ArrayList<GraphPath> EPPS, ArrayList<GraphPath> EEPS, ArrayList<GraphPath> ERPS) {
-		if(EPPS==null){
-			EPPS = new ArrayList<GraphPath>();
-		}
-		if(EEPS!=null)
-			EPPS.addAll(EEPS);
-		if(ERPS!=null)
-			EPPS.addAll(ERPS);
-		if(EPPS.size()!=0){
+		ArrayList<GraphPath> TResult =  new ArrayList<GraphPath>();
+		if(EPPS!=null && EPPS.size()!=0)
+			TResult.addAll(EPPS);
+		if(EEPS!=null && EEPS.size()!=0)
+			TResult.addAll(EEPS);
+		if(ERPS!=null && ERPS.size()!=0)
+			TResult.addAll(ERPS);
+		if(TResult.size()!=0){
 			TreeSet<GraphPath> set = new TreeSet<GraphPath>(new Mycompare());  
-			set.addAll(EPPS);
+			set.addAll(TResult);
 			this.TResult = new ArrayList<GraphPath>(set);
 		}
 	}
@@ -249,37 +259,44 @@ public class GraphHandler {
 			}
 			if(!t6.isEmpty()){
 				ArrayList<GraphRelationshipType> sub_RTL = new ArrayList<GraphRelationshipType>();
-				for(GraphRelationshipType grt1 : this.RTL){
+				for(GraphRelationshipType grt1 : RTL){
 					if(!t6.containsKey(grt1.getId()))
 						sub_RTL.add(grt1);
 				}
 				if(sub_RTL.size()!=0)
 					this.sub_RTL = sub_RTL;
-			}else{
+			}else if(RTL!=null){
 				this.sub_RTL = RTL;
 			}
 			if(!t5.isEmpty()){
 				ArrayList<GraphNodeLabel> sub_ELL = new ArrayList<GraphNodeLabel>();
-				for(GraphNodeLabel gnl1 : this.ELL){
+				for(GraphNodeLabel gnl1 : ELL){
 					if(!t5.containsKey(gnl1.getId()))
 						sub_ELL.add(gnl1);
 				}
 				if(sub_ELL.size()!=0)
 					this.sub_ELL = sub_ELL;
-			}else{
+			}else if(ELL!=null){
 				this.sub_ELL = ELL;
 			}
 			if(!t4.isEmpty()){
 				ArrayList<GraphNode> sub_EL = new ArrayList<GraphNode>();
-				for(GraphNode gn2 : this.EL){
+				for(GraphNode gn2 : EL){
 					if(!t4.containsKey(gn2.getId()))
 						sub_EL.add(gn2);
 				}
 				if(sub_EL.size()!=0)
 					this.sub_EL = sub_EL;
-			}else{
+			}else if(EL!=null){
 				this.sub_EL = EL;
 			}
+		}else{
+			if(EL!=null)
+				this.sub_EL = EL;
+			if(ELL!=null)
+				this.sub_ELL = ELL;
+			if(RTL!=null)
+				this.sub_RTL = RTL;
 		}
 	}
 	
@@ -305,49 +322,62 @@ public class GraphHandler {
 					}
 				}
 				ArrayList<GraphNode> new_EEL = new ArrayList<GraphNode>();
-				for(GraphPath gp : this.TResult){
+				for(GraphPath gp : paths){
 					for(GraphNode gn1 : gp.getNodes()){
 						if(t1.containsKey(gn1.getId()))
 							continue;
 						if(t3.containsKey(gn1.getId()))
 							continue;
+						boolean haveLabel = false;
 						for(Integer labelID : gn1.getLabels()){
-							if(!t2.containsKey(labelID))
+							if(t2.containsKey(labelID)){
+								haveLabel = true;
 								break;
+							}
 						}
-						new_EEL.add(gn1);
-						t1.put(gn1.getId(), "");
+						if(!haveLabel)
+							new_EEL.add(gn1);
+						if(!t1.containsKey(gn1.getId()))
+							t1.put(gn1.getId(), "");
 					}
 				}
-				if(new_EEL.size()!=0)
+				if(new_EEL.size()!=0){
 					this.EEL = new_EEL;
+				}else{
+					this.EEL = null;
+				}
 			}
 		}
 	
 		//extend TResult
 		public void extendTResult(){
 			if(this.EEL!=null){
-				ArrayList<GraphPath> EPPS = new ArrayList<GraphPath>();
-				ArrayList<GraphPath> EEPS = new ArrayList<GraphPath>();
-				ArrayList<GraphPath> ERPS = new ArrayList<GraphPath>();
+				ArrayList<GraphPath> ex_TResult = new ArrayList<GraphPath>();
+				ArrayList<GraphPath> EPPS = null;
+				ArrayList<GraphPath> EEPS = null;
+				ArrayList<GraphPath> ERPS = null;
 				if(this.sub_EL!=null){
 					EPPS = searchNodePairPath(this.sub_EL,  this.EEL);
+					if(EPPS!=null && EPPS.size()!=0)
+						ex_TResult.addAll(EPPS);
 				}
 				if(this.sub_ELL!=null){
 					EEPS = searchNodeLabelPath(this.EEL, this.sub_ELL);
+					if(EEPS!=null && EEPS.size()!=0)
+						ex_TResult.addAll(EEPS);
 				}
 				if(this.sub_RTL!=null){
 					ERPS = searchNodeRelationTypePath(this.EEL, this.sub_RTL);
+					if(ERPS!=null && ERPS.size()!=0)
+						ex_TResult.addAll(ERPS);
 				}
-				EPPS.addAll(EEPS);
-				EPPS.addAll(ERPS);
-				if(EPPS.size()!=0){
+				if(ex_TResult.size()!=0){
 					TreeSet<GraphPath> set = new TreeSet<GraphPath>(new Mycompare());  
-					set.addAll(EPPS);
-					EPPS = new ArrayList<GraphPath>(set);
-					setEELFromTResult(EPPS, this.sub_EL, this.sub_ELL, this.EEL);
-					setSub_ELSub_ELLSub_RTLFromTResult(EPPS, this.sub_EL, this.sub_ELL, this.sub_RTL);
-					this.TResult.addAll(EPPS);
+					set.addAll(ex_TResult);
+					ex_TResult = new ArrayList<GraphPath>(set);
+					setEELFromTResult(ex_TResult, this.sub_EL, this.sub_ELL, this.EEL);
+					setSub_ELSub_ELLSub_RTLFromTResult(ex_TResult, this.sub_EL, this.sub_ELL, this.sub_RTL);
+					this.TResult.addAll(ex_TResult);
 					extendTResult();
 				}
 			}
@@ -393,6 +423,60 @@ public class GraphHandler {
 			}
 		}
 		
+		
+		//update TResult's node and relation weight;
+		public void updateTResultWeight(){
+			if(this.TResult!=null){
+				Map<Integer, GraphRelationshipType> rtl_map = new HashMap<Integer, GraphRelationshipType>();
+				Map<Integer, GraphNodeLabel> ell_map = new HashMap<Integer, GraphNodeLabel>();
+				Map<Long, GraphNode> el_map = new HashMap<Long, GraphNode>();
+				if(this.RTL!=null){
+					for(GraphRelationshipType rtl : this.RTL){
+						rtl_map.put(rtl.getId(), rtl);
+					}
+				}
+				if(this.ELL!=null){
+					for(GraphNodeLabel ell : this.ELL){
+						ell_map.put(ell.getId(), ell);
+					}
+				}
+				if(this.EL!=null){
+					for(GraphNode el  : this.EL){
+						el_map.put(el.getId(), el);
+					}
+				}
+				
+				for(GraphPath gp : this.TResult){
+					for(GraphNode gn : gp.getNodes()){
+						if(el_map.containsKey(gn.getId())){
+							gn.setMatchTag(el_map.get(gn.getId()).getMatchTag());
+							gn.setWeight(el_map.get(gn.getId()).getWeight());
+						}
+						if(this.ELL!=null){
+							for( int gnl : gn.getLabels()){
+								if(ell_map.containsKey(gnl)){
+									if(gn.getMatchTag()!=null){
+										gn.getMatchTag().setNounLabelMatchList(ell_map.get(gnl).getMatchTags().getNounLabelMatchList());
+										gn.setWeight(gn.getWeight() + ell_map.get(gnl).getWeight());
+									}else{
+										gn.setMatchTag(ell_map.get(gnl).getMatchTags());
+										gn.setWeight(ell_map.get(gnl).getWeight());
+									}
+								}
+							}
+						}
+					}
+					if(this.RTL!=null){
+						for(GraphRelationship gr : gp.getEdges()){
+							if(rtl_map.containsKey(gr.getType())){
+								gr.setMatchTags(rtl_map.get(gr.getType()).getMatchTags());
+								gr.setWeight(rtl_map.get(gr.getType()).getWeight());
+							}
+						}
+					}
+				}
+			}
+		}
 		
 		public ArrayList<String> getVerbList() {
 			return verbList;
