@@ -19,9 +19,9 @@ import com.kgSearch.service.impl.RelationTypeService;
 
 public class GraphHandler {
 	
-	private ArrayList<String> verbList;
-	private ArrayList<String> adList;
-	private ArrayList<String> nounList;
+	protected ArrayList<String> verbList;
+	protected ArrayList<String> adList;
+	protected ArrayList<String> nounList;
 	private ArrayList<GraphRelationshipType> RTL;
 	private ArrayList<GraphNodeLabel> ELL;
 	private ArrayList<GraphNode> EL;
@@ -32,17 +32,6 @@ public class GraphHandler {
 	private ArrayList<GraphNode> sub_EL;
 	private ArrayList<GraphPathPattern> SResult;
 	
-	public void initCollections(){
-		this.EEL = null;
-		this.EL = null;
-		this.ELL = null;
-		this.RTL = null;
-		this.TResult = null;
-		this.SResult = null;
-		this.sub_EL = null;
-		this.sub_ELL = null;
-		this.sub_RTL = null;
-	}
 	
 	public ArrayList<GraphRelationshipType> searchRelationshipTypeByVerb(RelationTypeService relationTypeService){
 		return null;

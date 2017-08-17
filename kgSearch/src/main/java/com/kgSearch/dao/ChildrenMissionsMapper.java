@@ -1,22 +1,20 @@
 package com.kgSearch.dao;
 
-import java.util.List;
-
+import com.kgSearch.pojo.ChildrenMissionsWithBLOBs;
 import com.kgSearch.pojo.ChildrenMissions;
-
 
 public interface ChildrenMissionsMapper {
     int deleteByPrimaryKey(Integer id);
 
-    int insert(ChildrenMissions record);
+    int insert(ChildrenMissionsWithBLOBs record);
 
-    int insertSelective(ChildrenMissions record);
+    int insertSelective(ChildrenMissionsWithBLOBs record);
 
-    ChildrenMissions selectByPrimaryKey(Integer id);
+    ChildrenMissionsWithBLOBs selectByPrimaryKey(Integer id);
 
-    int updateByPrimaryKeySelective(ChildrenMissions record);
+    int updateByPrimaryKeySelective(ChildrenMissionsWithBLOBs record);
+
+    int updateByPrimaryKeyWithBLOBs(ChildrenMissionsWithBLOBs record);
 
     int updateByPrimaryKey(ChildrenMissions record);
-    
-    List<ChildrenMissions> selectAllChildrenMissions();
 }

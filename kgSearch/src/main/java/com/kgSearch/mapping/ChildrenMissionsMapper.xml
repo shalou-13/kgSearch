@@ -4,23 +4,24 @@
   <resultMap id="BaseResultMap" type="com.kgSearch.pojo.ChildrenMissions">
     <id column="Id" jdbcType="INTEGER" property="id" />
     <result column="PId" jdbcType="INTEGER" property="PId" />
+    <result column="graphID" jdbcType="VARCHAR" property="graphID" />
     <result column="state" jdbcType="INTEGER" property="state" />
     <result column="addTime" jdbcType="TIMESTAMP" property="addTime" />
     <result column="finishTime" jdbcType="TIMESTAMP" property="finishTime" />
   </resultMap>
-  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.kgSearch.pojo.ChildrenMissions">
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.kgSearch.pojo.ChildrenMissionsWithBLOBs">
     <result column="Nkeyword" jdbcType="LONGVARCHAR" property="nkeyword" />
     <result column="Vkeyword" jdbcType="LONGVARCHAR" property="vkeyword" />
     <result column="Akeyword" jdbcType="LONGVARCHAR" property="akeyword" />
     <result column="result" jdbcType="LONGVARCHAR" property="result" />
   </resultMap>
   <sql id="Base_Column_List">
-    Id, PId, state, addTime, finishTime
+    Id, PId, graphID, state, addTime, finishTime
   </sql>
   <sql id="Blob_Column_List">
     Nkeyword, Vkeyword, Akeyword, result
   </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
     select 
     <include refid="Base_Column_List" />
     ,
@@ -28,32 +29,31 @@
     from childmissiontable
     where Id = #{id,jdbcType=INTEGER}
   </select>
-  <select id="selectAllChildrenMissions" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-  	select
-  	<include refid="Base_Column_List"/>
-  	,
-    <include refid="Blob_Column_List" />
-  	from childmissiontable
-  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from childmissiontable
     where Id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.kgSearch.pojo.ChildrenMissions">
-    insert into childmissiontable (PId, state, 
-      addTime, finishTime, Nkeyword, 
-      Vkeyword, Akeyword, result
-      )
-    values (#{PId,jdbcType=INTEGER}, #{state,jdbcType=INTEGER}, 
-      #{addTime,jdbcType=TIMESTAMP}, #{finishTime,jdbcType=TIMESTAMP}, #{nkeyword,jdbcType=LONGVARCHAR}, 
-      #{vkeyword,jdbcType=LONGVARCHAR}, #{akeyword,jdbcType=LONGVARCHAR}, #{result,jdbcType=LONGVARCHAR}
-      )
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.kgSearch.pojo.ChildrenMissionsWithBLOBs">
+    insert into childmissiontable (Id, PId, graphID, 
+      state, addTime, finishTime, 
+      Nkeyword, Vkeyword, Akeyword, 
+      result)
+    values (#{id,jdbcType=INTEGER}, #{PId,jdbcType=INTEGER}, #{graphID,jdbcType=VARCHAR}, 
+      #{state,jdbcType=INTEGER}, #{addTime,jdbcType=TIMESTAMP}, #{finishTime,jdbcType=TIMESTAMP}, 
+      #{nkeyword,jdbcType=LONGVARCHAR}, #{vkeyword,jdbcType=LONGVARCHAR}, #{akeyword,jdbcType=LONGVARCHAR}, 
+      #{result,jdbcType=LONGVARCHAR})
   </insert>
-  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.kgSearch.pojo.ChildrenMissions">
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.kgSearch.pojo.ChildrenMissionsWithBLOBs">
     insert into childmissiontable
     <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        Id,
+      </if>
       <if test="PId != null">
         PId,
+      </if>
+      <if test="graphID != null">
+        graphID,
       </if>
       <if test="state != null">
         state,
@@ -78,8 +78,14 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
       <if test="PId != null">
         #{PId,jdbcType=INTEGER},
+      </if>
+      <if test="graphID != null">
+        #{graphID,jdbcType=VARCHAR},
       </if>
       <if test="state != null">
         #{state,jdbcType=INTEGER},
@@ -104,11 +110,14 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.kgSearch.pojo.ChildrenMissions">
+  <update id="updateByPrimaryKeySelective" parameterType="com.kgSearch.pojo.ChildrenMissionsWithBLOBs">
     update childmissiontable
     <set>
       <if test="PId != null">
         PId = #{PId,jdbcType=INTEGER},
+      </if>
+      <if test="graphID != null">
+        graphID = #{graphID,jdbcType=VARCHAR},
       </if>
       <if test="state != null">
         state = #{state,jdbcType=INTEGER},
@@ -119,12 +128,25 @@
       <if test="finishTime != null">
         finishTime = #{finishTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="nkeyword != null">
+        Nkeyword = #{nkeyword,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="vkeyword != null">
+        Vkeyword = #{vkeyword,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="akeyword != null">
+        Akeyword = #{akeyword,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="result != null">
+        result = #{result,jdbcType=LONGVARCHAR},
+      </if>
     </set>
     where Id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.kgSearch.pojo.ChildrenMissions">
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.kgSearch.pojo.ChildrenMissionsWithBLOBs">
     update childmissiontable
     set PId = #{PId,jdbcType=INTEGER},
+      graphID = #{graphID,jdbcType=VARCHAR},
       state = #{state,jdbcType=INTEGER},
       addTime = #{addTime,jdbcType=TIMESTAMP},
       finishTime = #{finishTime,jdbcType=TIMESTAMP},
@@ -132,6 +154,15 @@
       Vkeyword = #{vkeyword,jdbcType=LONGVARCHAR},
       Akeyword = #{akeyword,jdbcType=LONGVARCHAR},
       result = #{result,jdbcType=LONGVARCHAR}
+    where Id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.kgSearch.pojo.ChildrenMissions">
+    update childmissiontable
+    set PId = #{PId,jdbcType=INTEGER},
+      graphID = #{graphID,jdbcType=VARCHAR},
+      state = #{state,jdbcType=INTEGER},
+      addTime = #{addTime,jdbcType=TIMESTAMP},
+      finishTime = #{finishTime,jdbcType=TIMESTAMP}
     where Id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>
