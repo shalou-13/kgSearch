@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
 
-import org.springframework.stereotype.Service;
-
 import com.kgSearch.pojo.GraphNode;
 import com.kgSearch.pojo.GraphNodeLabel;
 import com.kgSearch.pojo.GraphPath;
@@ -15,8 +13,10 @@ import com.kgSearch.pojo.GraphPathPattern;
 import com.kgSearch.pojo.GraphRelationship;
 import com.kgSearch.pojo.GraphRelationshipType;
 import com.kgSearch.pojo.MatchTags;
+import com.kgSearch.service.impl.LabelService;
+import com.kgSearch.service.impl.RelationTypeService;
 
-@Service
+
 public class GraphHandler {
 	
 	private ArrayList<String> verbList;
@@ -32,19 +32,31 @@ public class GraphHandler {
 	private ArrayList<GraphNode> sub_EL;
 	private ArrayList<GraphPathPattern> SResult;
 	
-	public ArrayList<GraphRelationshipType> searchRelationshipTypeByVerb(){
+	public void initCollections(){
+		this.EEL = null;
+		this.EL = null;
+		this.ELL = null;
+		this.RTL = null;
+		this.TResult = null;
+		this.SResult = null;
+		this.sub_EL = null;
+		this.sub_ELL = null;
+		this.sub_RTL = null;
+	}
+	
+	public ArrayList<GraphRelationshipType> searchRelationshipTypeByVerb(RelationTypeService relationTypeService){
 		return null;
 	}
 
-	public ArrayList<GraphRelationshipType> searchRelationshipTypeByAdj(){
+	public ArrayList<GraphRelationshipType> searchRelationshipTypeByAdj(RelationTypeService relationTypeService){
 		return null;
 	}
 	
-	public ArrayList<GraphNodeLabel> searchGraphNodeLabelByNoun(){
+	public ArrayList<GraphNodeLabel> searchGraphNodeLabelByNoun(LabelService labelService){
 		return null;
 	}
 
-	public ArrayList<GraphNodeLabel> searchGraphNodeLabelByAdj(){
+	public ArrayList<GraphNodeLabel> searchGraphNodeLabelByAdj(LabelService labelService){
 		return null;
 	}
 	
@@ -72,11 +84,11 @@ public class GraphHandler {
 		return null;
 	}
 	
-	public void searchAction(){
-		ArrayList<GraphRelationshipType> vRTL = searchRelationshipTypeByVerb();
-		ArrayList<GraphRelationshipType> aRTL = searchRelationshipTypeByAdj();
-		ArrayList<GraphNodeLabel> nELL = searchGraphNodeLabelByNoun();
-		ArrayList<GraphNodeLabel> aELL = searchGraphNodeLabelByAdj();
+	public void searchAction(LabelService labelService, RelationTypeService relationTypeService){
+		ArrayList<GraphRelationshipType> vRTL = searchRelationshipTypeByVerb(relationTypeService);
+		ArrayList<GraphRelationshipType> aRTL = searchRelationshipTypeByAdj(relationTypeService);
+		ArrayList<GraphNodeLabel> nELL = searchGraphNodeLabelByNoun(labelService);
+		ArrayList<GraphNodeLabel> aELL = searchGraphNodeLabelByAdj(labelService);
 		ArrayList<GraphNode> EL = searchGraphNodeByNoun();
 		setRTL(vRTL, aRTL);
 		setELL(nELL, aELL);

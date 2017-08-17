@@ -10,11 +10,7 @@ import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.driver.v1.types.Node;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import com.kgSearch.dao.LabelPropertiesMapper;
-import com.kgSearch.dao.TypePropertiesMapper;
 import com.kgSearch.method.GraphHandler;
 import com.kgSearch.pojo.GraphNode;
 import com.kgSearch.pojo.GraphNodeLabel;
@@ -24,15 +20,10 @@ import com.kgSearch.pojo.GraphRelationshipType;
 import com.kgSearch.pojo.LabelProperties;
 import com.kgSearch.pojo.MatchTags;
 import com.kgSearch.pojo.TypeProperties;
+import com.kgSearch.service.impl.LabelService;
+import com.kgSearch.service.impl.RelationTypeService;
 
-@Service
 public class ReNeo4jHandler extends GraphHandler{
-
-	@Autowired
-	private LabelPropertiesMapper labelPropertiesService;
-	
-	@Autowired
-	private TypePropertiesMapper typePropertiesService;
 	
 	private org.neo4j.driver.v1.Session session;
 	private Map<String,Integer> labelIdMap;
@@ -41,14 +32,10 @@ public class ReNeo4jHandler extends GraphHandler{
 	public void initSession(Driver driver){
 		session=driver.session();
 	}
-	
-	public void initIdMap(){
+
+	public void initIdMap(ArrayList<LabelProperties> AllLabel, ArrayList<TypeProperties> AllType){
 		labelIdMap=new HashMap<>();
 		typeIdMap=new HashMap<>();
-		
-		ArrayList<LabelProperties> AllLabel=(ArrayList<LabelProperties>)labelPropertiesService.selectAll();
-		ArrayList<TypeProperties> AllType=(ArrayList<TypeProperties>)typePropertiesService.selectAll();
-		
 		for(LabelProperties Alabel:AllLabel){
 			labelIdMap.put(Alabel.getLabel(),Alabel.getId());
 		}
@@ -58,11 +45,11 @@ public class ReNeo4jHandler extends GraphHandler{
 	}
 	
 	@Override
-	public ArrayList<GraphRelationshipType> searchRelationshipTypeByVerb() {
+	public ArrayList<GraphRelationshipType> searchRelationshipTypeByVerb(RelationTypeService relationTypeService) {
 		ArrayList<GraphRelationshipType> VRTL=new ArrayList<>();
 		Set<Integer> idOfVRTL=new HashSet<>();
 		for(String Averb:this.getVerbList()){
-			ArrayList<TypeProperties> searchResult=(ArrayList<TypeProperties>)typePropertiesService.fuzzySelectTypeByString(Averb);
+			ArrayList<TypeProperties> searchResult=relationTypeService.fuzzySelectTypeByString(Averb);
 			for(TypeProperties Atype:searchResult){
 				int id=Atype.getId();
 				if(idOfVRTL.contains(id)==false){
@@ -99,11 +86,11 @@ public class ReNeo4jHandler extends GraphHandler{
 	}
 
 	@Override
-	public ArrayList<GraphRelationshipType> searchRelationshipTypeByAdj() {
+	public ArrayList<GraphRelationshipType> searchRelationshipTypeByAdj(RelationTypeService relationTypeService) {
 		ArrayList<GraphRelationshipType> ARTL=new ArrayList<>();
 		Set<Integer> idOfARTL=new HashSet<>();
 		for(String Aadj:this.getAdList()){
-			ArrayList<TypeProperties> searchResult=(ArrayList<TypeProperties>)typePropertiesService.fuzzySelectPropertiesByString(Aadj);
+			ArrayList<TypeProperties> searchResult=relationTypeService.fuzzySelectPropertiesByString(Aadj);
 			for(TypeProperties Atype:searchResult){
 				int id=Atype.getId();
 				if(idOfARTL.contains(id)==false){
@@ -140,11 +127,11 @@ public class ReNeo4jHandler extends GraphHandler{
 	}
 
 	@Override
-	public ArrayList<GraphNodeLabel> searchGraphNodeLabelByNoun() {
+	public ArrayList<GraphNodeLabel> searchGraphNodeLabelByNoun(LabelService labelService) {
 		ArrayList<GraphNodeLabel> NELL=new ArrayList<>();	
 		Set<Integer> idOfNELL=new HashSet<>();
 		for(String Anoun:this.getNounList()){
-			ArrayList<LabelProperties> searchResult=(ArrayList<LabelProperties>)labelPropertiesService.fuzzySelectLabelByString(Anoun);
+			ArrayList<LabelProperties> searchResult=labelService.fuzzySelectLabelByString(Anoun);
 			for(LabelProperties Alabel:searchResult){
 				int id=Alabel.getId();
 				if(idOfNELL.contains(id)==false){
@@ -181,11 +168,11 @@ public class ReNeo4jHandler extends GraphHandler{
 	}
 
 	@Override
-	public ArrayList<GraphNodeLabel> searchGraphNodeLabelByAdj() {
+	public ArrayList<GraphNodeLabel> searchGraphNodeLabelByAdj(LabelService labelService) {
 		ArrayList<GraphNodeLabel> AELL=new ArrayList<>();
 		Set<Integer> idOfAELL=new HashSet<>();
 		for(String Aadj:this.getAdList()){
-			ArrayList<LabelProperties> searchResult=(ArrayList<LabelProperties>)labelPropertiesService.fuzzySelectPropertiesByString(Aadj);
+			ArrayList<LabelProperties> searchResult=labelService.fuzzySelectPropertiesByString(Aadj);
 			for(LabelProperties Alabel:searchResult){
 				int id=Alabel.getId();
 				if(idOfAELL.contains(id)==false){

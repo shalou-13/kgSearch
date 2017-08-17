@@ -102,7 +102,5 @@ public class TestNeo4jHandler {
 		reNeo4jHandler.setAdList(adList);
 		reNeo4jHandler.setNounList(nounList);
 		reNeo4jHandler.initSession(driver);
-		reNeo4jHandler.initIdMap();
-		reNeo4jHandler.searchAction();
 	}
 }

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.asm.Type;
 import com.kgSearch.pojo.TypeProperties;
 
 @Service

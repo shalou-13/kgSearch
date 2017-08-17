@@ -16,6 +16,7 @@ import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.driver.v1.Transaction;
 import org.neo4j.driver.v1.Values;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -25,14 +26,23 @@ import com.kgSearch.dao.ChildrenMissionsMapper;
 import com.kgSearch.dao.MissionsMapper;
 import com.kgSearch.method.impl.ReNeo4jHandler;
 import com.kgSearch.pojo.ChildrenMissions;
+import com.kgSearch.pojo.LabelProperties;
 import com.kgSearch.pojo.MissionsWithBLOBs;
+import com.kgSearch.pojo.TypeProperties;
+import com.kgSearch.service.impl.LabelService;
+import com.kgSearch.service.impl.RelationTypeService;
 import com.kgSearch.util.JsonHandler;
 
 @Controller
 public class GraphSearchController {
 	
-	@Resource
-	private ReNeo4jHandler reNeo4jHandler;
+	/*@Autowired
+	private ReNeo4jHandler reNeo4jHandler;*/
+	
+	@Autowired
+	private LabelService labelService;
+	@Autowired
+	private RelationTypeService relationTypeService;
 	@Resource
 	private ChildrenMissionsMapper childrenMissionsMapper;
 	@Resource
@@ -96,6 +106,7 @@ public class GraphSearchController {
 			verbList = new ArrayList<String>(v_obj.keySet());
 		}
 		if(verbList.size()!=0||adList.size()!=0||nounList.size()!=0){
+			ReNeo4jHandler reNeo4jHandler = new ReNeo4jHandler();
 			reNeo4jHandler.setVerbList(verbList);
 			reNeo4jHandler.setAdList(adList);
 			reNeo4jHandler.setNounList(nounList);
@@ -105,18 +116,12 @@ public class GraphSearchController {
 				Object graphHandler = c.newInstance();
 				if(graphHandler instanceof ReNeo4jHandler){
 					Driver driver=GraphDatabase.driver("bolt://localhost",AuthTokens.basic("neo4j","123456"));
-					reNeo4jHandler.setEEL(null);
-					reNeo4jHandler.setEL(null);
-					reNeo4jHandler.setELL(null);
-					reNeo4jHandler.setRTL(null);
-					reNeo4jHandler.setTResult(null);
-					reNeo4jHandler.setSResult(null);
-					reNeo4jHandler.setSub_EL(null);
-					reNeo4jHandler.setSub_ELL(null);
-					reNeo4jHandler.setSub_RTL(null);
+					//reNeo4jHandler.initCollections();
 					reNeo4jHandler.initSession(driver);
-					reNeo4jHandler.initIdMap();
-					reNeo4jHandler.searchAction();
+					ArrayList<LabelProperties> AllLabel=labelService.getAllLabel();
+					ArrayList<TypeProperties> AllType=relationTypeService.GetAllRelationType();
+					reNeo4jHandler.initIdMap(AllLabel, AllType);
+					reNeo4jHandler.searchAction(labelService, relationTypeService);
 					HashMap<String, Object> result = new HashMap<String, Object>();
 					result.put("TResult", reNeo4jHandler.getTResult());
 					result.put("SResult", reNeo4jHandler.getSResult());

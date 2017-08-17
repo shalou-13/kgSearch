@@ -10,6 +10,8 @@ import com.kgSearch.pojo.GraphNodeLabel;
 import com.kgSearch.pojo.GraphPath;
 import com.kgSearch.pojo.GraphPathPattern;
 import com.kgSearch.pojo.GraphRelationshipType;
+import com.kgSearch.service.impl.LabelService;
+import com.kgSearch.service.impl.RelationTypeService;
 
 public class ExampleGraphHandler extends GraphHandler {
 	
@@ -25,27 +27,27 @@ public class ExampleGraphHandler extends GraphHandler {
 
 	
 	@Override
-	public ArrayList<GraphRelationshipType> searchRelationshipTypeByVerb() {
+	public ArrayList<GraphRelationshipType> searchRelationshipTypeByVerb(RelationTypeService relationTypeService) {
 		// TODO Auto-generated method stub
-		return super.searchRelationshipTypeByVerb();
+		return super.searchRelationshipTypeByVerb(relationTypeService);
 	}
 	
 	@Override
-	public ArrayList<GraphRelationshipType> searchRelationshipTypeByAdj() {
+	public ArrayList<GraphRelationshipType> searchRelationshipTypeByAdj(RelationTypeService relationTypeService) {
 		// TODO Auto-generated method stub
-		return super.searchRelationshipTypeByAdj();
+		return super.searchRelationshipTypeByAdj(relationTypeService);
 	}
 	
 	@Override
-	public ArrayList<GraphNodeLabel> searchGraphNodeLabelByNoun() {
+	public ArrayList<GraphNodeLabel> searchGraphNodeLabelByNoun(LabelService labelService) {
 		// TODO Auto-generated method stub
-		return super.searchGraphNodeLabelByNoun();
+		return super.searchGraphNodeLabelByNoun(labelService);
 	}
 	
 	@Override
-	public ArrayList<GraphNodeLabel> searchGraphNodeLabelByAdj() {
+	public ArrayList<GraphNodeLabel> searchGraphNodeLabelByAdj(LabelService labelService) {
 		// TODO Auto-generated method stub
-		return super.searchGraphNodeLabelByAdj();
+		return super.searchGraphNodeLabelByAdj(labelService);
 	}
 	
 	@Override
