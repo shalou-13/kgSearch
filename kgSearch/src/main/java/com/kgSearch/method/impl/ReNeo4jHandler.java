@@ -95,11 +95,6 @@ public class ReNeo4jHandler extends GraphHandler{
 				}
 			}
 		}
-		System.out.println("VRTL");
-		for(GraphRelationshipType graphRelationshipType:VRTL){
-			System.out.print(graphRelationshipType.getTypeName()+" ");
-		}
-		System.out.print("\n");
 		return VRTL;
 	}
 
@@ -141,11 +136,6 @@ public class ReNeo4jHandler extends GraphHandler{
 				}
 			}
 		}
-		System.out.println("ARTL:");
-		for(GraphRelationshipType graphRelationshipType:ARTL){
-			System.out.print(graphRelationshipType.getTypeName()+" ");
-		}
-		System.out.print("\n");
 		return ARTL;
 	}
 
@@ -187,11 +177,6 @@ public class ReNeo4jHandler extends GraphHandler{
 				}
 			}
 		}
-		System.out.println("NELL:");
-		for(GraphNodeLabel graphNodeLabel:NELL){
-			System.out.print(graphNodeLabel.getLabelName()+" ");
-		}
-		System.out.print("\n");
 		return NELL;
 	}
 
@@ -233,11 +218,6 @@ public class ReNeo4jHandler extends GraphHandler{
 				}
 			}
 		}
-		System.out.println("AELL:");
-		for(GraphNodeLabel graphNodeLabel:AELL){
-			System.out.print(graphNodeLabel.getLabelName()+" ");
-		}
-		System.out.print("\n");
 		return AELL;
 	}
 
@@ -274,11 +254,11 @@ public class ReNeo4jHandler extends GraphHandler{
 			while(statementResult.hasNext()){
 				Record record=statementResult.next();
 				Node node=record.get(0).asNode();
-				ArrayList<Integer> labels=new ArrayList<>();
+				HashMap<Integer, String> labels=new HashMap<Integer, String>();
 				Map<String,Object> properties=node.asMap();
 				MatchTags matchTags=new MatchTags();
 				for(String Alabel:node.labels()){
-					labels.add(labelIdMap.get(Alabel));
+					labels.put(labelIdMap.get(Alabel), Alabel);
 				}
 				matchTags.setNounMatch(true);
 				for(String Anoun:this.getNounList()){
@@ -297,11 +277,6 @@ public class ReNeo4jHandler extends GraphHandler{
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.out.println("mEL:");
-		for(GraphNode graphNode:NEL){
-			System.out.print(graphNode.getProperties().toString()+" ");
-		}
-		System.out.print("\n");
 		if(NEL.size()!=0)
 			return NEL;
 		return null;
@@ -325,11 +300,11 @@ public class ReNeo4jHandler extends GraphHandler{
 			while(statementResult.hasNext()){
 				Record record=statementResult.next();
 				Node node=record.get(0).asNode();
-				ArrayList<Integer> labels=new ArrayList<>();
+				HashMap<Integer, String> labels=new HashMap<Integer, String>();
 				Map<String,Object> properties=node.asMap();
 				MatchTags matchTags=new MatchTags();
 				for(String Alabel:node.labels()){
-					labels.add(labelIdMap.get(Alabel));
+					labels.put(labelIdMap.get(Alabel), Alabel);
 				}
 				matchTags.setNounMatch(true);
 				for(String Anoun:this.getNounList()){
@@ -348,11 +323,6 @@ public class ReNeo4jHandler extends GraphHandler{
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.out.println("pEL:");
-		for(GraphNode graphNode:NEL){
-			System.out.print(graphNode.getProperties().toString()+" ");
-		}
-		System.out.print("\n");
 		if(NEL.size()!=0)
 			return NEL;
 		return null;
@@ -377,7 +347,7 @@ public class ReNeo4jHandler extends GraphHandler{
 					while(statementResult.hasNext()){
 						Record record=statementResult.next();
 						GraphPath graphPath=new GraphPath();
-						graphPath.setRevPath(record,labelIdMap,typeIdMap);
+						graphPath.setPath(record,labelIdMap,typeIdMap);
 						EPPS.add(graphPath);
 					}
 				}
@@ -408,14 +378,6 @@ public class ReNeo4jHandler extends GraphHandler{
 				}
 			}
 		}
-		System.out.println("EEPS:");
-		for(GraphPath graphPath:EEPS){
-			for(GraphNode graphNode:graphPath.getNodes()){
-				System.out.print(graphNode.getId()+" ");
-			}
-			System.out.println("---");
-		}
-		System.out.print("\n");
 		return EEPS;
 	}
 
@@ -438,13 +400,6 @@ public class ReNeo4jHandler extends GraphHandler{
 				}
 			}
 		}
-		System.out.println("ERPS:");
-		for(GraphPath graphPath:ERPS){
-			for(GraphNode graphNode:graphPath.getNodes()){
-				System.out.print(graphNode.getId()+" ");
-			}
-		}
-		System.out.print("\n");
 		return ERPS;
 	}
 
@@ -467,7 +422,7 @@ public class ReNeo4jHandler extends GraphHandler{
 					while(statementResult.hasNext()){
 						Record record=statementResult.next();
 						GraphPath graphPath=new GraphPath();
-						graphPath.setRevPath(record,labelIdMap,typeIdMap);
+						graphPath.setPath(record,labelIdMap,typeIdMap);
 						EPPS.add(graphPath);
 					}
 				}
@@ -476,13 +431,6 @@ public class ReNeo4jHandler extends GraphHandler{
 				}
 			}
 		}
-		System.out.println("EPPS");
-		for(GraphPath graphPath:EPPS){
-			for(GraphNode graphNode:graphPath.getNodes()){
-				System.out.print(graphNode.getId()+" ");
-			}
-		}
-		System.out.print("\n");
 		return EPPS;
 	}
 

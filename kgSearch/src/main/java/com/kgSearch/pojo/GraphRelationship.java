@@ -5,6 +5,7 @@ import java.util.Map;
 public class GraphRelationship {
 	private long id;
 	private int Type;
+	private String typeName;
 	private long fromNode;
 	private long toNode;
 	private Map<String,Object> Properties;
@@ -24,6 +25,12 @@ public class GraphRelationship {
 		Type = type;
 	}
 	
+	public String getTypeName() {
+		return typeName;
+	}
+	public void setTypeName(String typeName) {
+		this.typeName = typeName;
+	}
 	public long getFromNode() {
 		return fromNode;
 	}

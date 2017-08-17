@@ -1,6 +1,7 @@
 package com.kgSearch.pojo;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class GraphNode {
@@ -8,16 +9,17 @@ public class GraphNode {
 	 * 节点可以拥有：多个标签和多个属性键值对
 	 */
 	
-	private ArrayList<Integer> Labels;
+	private HashMap<Integer, String> Labels;
 	private long id;
 	private int weight;
 	private Map<String,Object> Properties;
 	private MatchTags matchTag;
 	
-	public ArrayList<Integer> getLabels() {
+	
+	public HashMap<Integer, String> getLabels() {
 		return Labels;
 	}
-	public void setLabels(ArrayList<Integer> labels) {
+	public void setLabels(HashMap<Integer, String> labels) {
 		Labels = labels;
 	}
 	public long getId() {
@@ -45,9 +47,9 @@ public class GraphNode {
 		Properties = properties;
 	}
 	public void setLabelsById(Map<Long,ArrayList<String>> idLabelMap,Map<String,Integer> labelIntMap){
-		Labels=new ArrayList<>();
+		Labels=new HashMap<Integer, String>();
 		for(String Alabel:idLabelMap.get(this.id)){
-			Labels.add(labelIntMap.get(Alabel));
+			Labels.put(labelIntMap.get(Alabel),Alabel);
 		}
 	}
 	

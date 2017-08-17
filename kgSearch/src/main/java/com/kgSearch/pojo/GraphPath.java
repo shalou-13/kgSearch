@@ -2,6 +2,7 @@ package com.kgSearch.pojo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.neo4j.driver.v1.Record;
@@ -32,10 +33,10 @@ public class GraphPath {
 		this.nodes=new ArrayList<>();
 		this.edges=new ArrayList<>();
 		for(Node node:record.get("p").asPath().nodes()){
-			ArrayList<Integer> labels=new ArrayList<>();
+			HashMap<Integer, String> labels=new HashMap<Integer, String>();
 			Map<String,Object> properties=node.asMap();
 			for(String key:node.labels()){
-				labels.add(labelIdMap.get(key));
+				labels.put(labelIdMap.get(key), key);
 			}
 			GraphNode graphNode=new GraphNode();
 			graphNode.setId(node.id());
@@ -48,6 +49,7 @@ public class GraphPath {
 			GraphRelationship graphRelationship=new GraphRelationship();
 			graphRelationship.setId(relationship.id());
 			graphRelationship.setType(typeIdMap.get(relationship.type()));
+			graphRelationship.setTypeName(relationship.type());
 			graphRelationship.setFromNode(relationship.startNodeId());
 			graphRelationship.setToNode(relationship.endNodeId());
 			graphRelationship.setProperties(properties);
@@ -55,89 +57,6 @@ public class GraphPath {
 		}
 	}
 	
-	public void setRevPath(Record record,Map<String,Integer> labelIdMap,Map<String,Integer> typeIdMap){
-		this.nodes=new ArrayList<>();
-		this.edges=new ArrayList<>();
-		ArrayList<Node> revnodes=new ArrayList<>();
-		ArrayList<Relationship> revrelationship=new ArrayList<>();
-		for(Node node:record.get("p").asPath().nodes()){
-			revnodes.add(node);
-		}
-		for(Relationship relationship:record.get("p").asPath().relationships()){
-			revrelationship.add(relationship);
-		}
-		for(Node node:revnodes){
-			ArrayList<Integer> labels=new ArrayList<>();
-			Map<String,Object> properties=node.asMap();
-			for(String key:node.labels()){
-				labels.add(labelIdMap.get(key));
-			}
-			GraphNode graphNode=new GraphNode();
-			graphNode.setId(node.id());
-			graphNode.setLabels(labels);
-			graphNode.setProperties(properties);
-			this.nodes.add(graphNode);
-		}
-		for(Relationship relationship:revrelationship){
-			Map<String,Object> properties=relationship.asMap();
-			GraphRelationship graphRelationship=new GraphRelationship();
-			graphRelationship.setId(relationship.id());
-			graphRelationship.setType(typeIdMap.get(relationship.type()));
-			graphRelationship.setFromNode(relationship.startNodeId());
-			graphRelationship.setToNode(relationship.endNodeId());
-			graphRelationship.setProperties(properties);
-			this.edges.add(graphRelationship);
-		}
-		
-	}
-	
-	public void setOnePath(Record record,Map<String,Integer> labelIdMap,Map<String,Integer> typeIdMap){
-		this.nodes=new ArrayList<>();
-		this.edges=new ArrayList<>();
-		//适用于ERPS和EEPS的选举
-		Node node1=record.get(0).asNode();
-		Node node2=record.get(2).asNode();
-		Relationship relationship=record.get(1).asRelationship();
-		
-		GraphNode graphNode1=new GraphNode();
-		ArrayList<Integer> labels1=new ArrayList<Integer>();
-		Map<String,Object> properties1=node1.asMap();
-		for(String Alabel:node1.labels()){
-			labels1.add(labelIdMap.get(Alabel));
-		}
-		
-		graphNode1.setLabels(labels1);
-		graphNode1.setProperties(properties1);
-		graphNode1.setId(node1.id());
-		
-		ArrayList<Integer> labels2=new ArrayList<Integer>();
-		Map<String,Object> properties2=node2.asMap();
-		GraphNode graphNode2=new GraphNode();
-		GraphRelationship graphRelationship=new GraphRelationship();
-		for(String Alabel:node2.labels()){
-			labels2.add(labelIdMap.get(Alabel));
-		}
-		graphNode2.setLabels(labels2);
-		graphNode2.setProperties(properties2);
-		graphNode2.setId(node2.id());
-		
-		Map<String,Object> properties3=relationship.asMap();
-		if(relationship.startNodeId()==node1.id()){
-			this.nodes.add(graphNode1);
-			this.nodes.add(graphNode2);
-		}
-		else{
-			this.nodes.add(graphNode2);
-			this.nodes.add(graphNode1);
-		}
-		graphRelationship.setId(relationship.id());
-		graphRelationship.setType(typeIdMap.get(relationship.type()));
-		graphRelationship.setFromNode(relationship.startNodeId());
-		graphRelationship.setToNode(relationship.endNodeId());
-		graphRelationship.setProperties(properties3);
-		
-		this.edges.add(graphRelationship);
-	}
 	public void setTypeAndLabels(Map<Long,ArrayList<String>> idLabelMap,Map<String,Integer> labelIntMap,Map<Long,String> idTypeMap,Map<String,Integer> typeIntMap){
 		for(GraphNode g1:this.nodes){
 			g1.setLabelsById(idLabelMap,labelIntMap);

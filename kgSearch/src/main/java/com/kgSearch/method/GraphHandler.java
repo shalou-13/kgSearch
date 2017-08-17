@@ -177,8 +177,8 @@ public class GraphHandler {
 			}
 			Map<Integer,Boolean> exisit_label = new HashMap<Integer,Boolean>();
 			for(GraphNode el : EL){
-				ArrayList<Integer> labels = el.getLabels();
-				for(Integer labelID : labels){
+				HashMap<Integer, String> labels = el.getLabels();
+				for(Integer labelID : labels.keySet()){
 					if(temp.containsKey(labelID)){
 						if(!exisit_label.containsKey(labelID))
 							exisit_label.put(labelID, true);
@@ -247,7 +247,7 @@ public class GraphHandler {
 				for(GraphNode gn1 : gp.getNodes()){
 					if(t1.containsKey(gn1.getId()) && !t4.containsKey(gn1.getId()))
 						t4.put(gn1.getId(), "");
-					for(Integer labelID : gn1.getLabels()){
+					for(Integer labelID : gn1.getLabels().keySet()){
 						if(t2.containsKey(labelID) && !t5.containsKey(labelID))
 							t5.put(labelID, "");
 					}
@@ -329,7 +329,7 @@ public class GraphHandler {
 						if(t3.containsKey(gn1.getId()))
 							continue;
 						boolean haveLabel = false;
-						for(Integer labelID : gn1.getLabels()){
+						for(Integer labelID : gn1.getLabels().keySet()){
 							if(t2.containsKey(labelID)){
 								haveLabel = true;
 								break;
@@ -453,10 +453,11 @@ public class GraphHandler {
 							gn.setWeight(el_map.get(gn.getId()).getWeight());
 						}
 						if(this.ELL!=null){
-							for( int gnl : gn.getLabels()){
+							for( int gnl : gn.getLabels().keySet()){
 								if(ell_map.containsKey(gnl)){
 									if(gn.getMatchTag()!=null){
 										gn.getMatchTag().setNounLabelMatchList(ell_map.get(gnl).getMatchTags().getNounLabelMatchList());
+										gn.getMatchTag().setAdjMatchList(ell_map.get(gnl).getMatchTags().getAdjMatchList());
 										gn.setWeight(gn.getWeight() + ell_map.get(gnl).getWeight());
 									}else{
 										gn.setMatchTag(ell_map.get(gnl).getMatchTags());

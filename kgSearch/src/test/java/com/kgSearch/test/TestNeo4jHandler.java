@@ -9,14 +9,11 @@ import org.junit.runner.RunWith;
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.GraphDatabase;
-import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;
-import org.neo4j.driver.v1.StatementResult;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.kgSearch.dao.LabelPropertiesMapper;
-import com.kgSearch.method.impl.Neo4jHandler;
 import com.kgSearch.method.impl.ReNeo4jHandler;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -25,9 +22,6 @@ public class TestNeo4jHandler {
 
 	Driver driver=GraphDatabase.driver("bolt://localhost:7687",AuthTokens.basic("neo4j","huhantao9"));
 	Session session=driver.session();
-	
-	@Resource
-	private Neo4jHandler neo4jHandler;
 	
 	@Resource
 	private ReNeo4jHandler reNeo4jHandler;
