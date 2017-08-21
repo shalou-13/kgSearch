@@ -135,9 +135,11 @@ public class GraphSearchController {
 					result.put("EL", reNeo4jHandler.getEL());
 					result.put("graphID", graphID);
 					result.put("graphTypeID", typeID);
+					result.put("weight", reNeo4jHandler.getWeight());
 					ChildrenMissionsWithBLOBs childrenMission = new ChildrenMissionsWithBLOBs();
 					childrenMission.setId(subMissionID);
 					childrenMission.setResult(JSON.toJSONString(result));
+					childrenMission.setState(3);
 					childrenMissionService.updateByPrimaryKeyWithBLOBs(childrenMission);
 					return JsonHandler.writeJsontoResponse(4000, result);
 				}
@@ -211,9 +213,11 @@ public class GraphSearchController {
 					result.put("EL", reNeo4jHandler.getEL());
 					result.put("graphID", graphID);
 					result.put("graphTypeID", typeID);
+					result.put("weight", reNeo4jHandler.getWeight());
 					ChildrenMissionsWithBLOBs childrenMission = new ChildrenMissionsWithBLOBs();
 					childrenMission.setId(subMissionID);
 					childrenMission.setResult(JSON.toJSONString(result));
+					childrenMission.setState(3);
 					childrenMissionService.updateByPrimaryKeyWithBLOBs(childrenMission);
 					return JsonHandler.writeJsontoResponse(4000, result);
 				}

@@ -14,6 +14,7 @@ public class GraphPath {
 	
 	private ArrayList<GraphNode> nodes;
 	private ArrayList<GraphRelationship> edges;
+	private int weight;
 	
 	public ArrayList<GraphNode> getNodes(){
 		return this.nodes;
@@ -23,6 +24,14 @@ public class GraphPath {
 		return this.edges;
 	}
 	
+	public int getWeight() {
+		return weight;
+	}
+
+	public void setWeight(int weight) {
+		this.weight = weight;
+	}
+
 	public void setPath(Record record,Map<String,Integer> labelIdMap,Map<String,Integer> typeIdMap){
 		//针对通路(pairpath)设计，不能用于其他地方(会报错)
 		//录入起点

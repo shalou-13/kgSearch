@@ -6,8 +6,15 @@ public class GraphPathPattern {
 	private GraphRelationshipType relationType;
 	// direction 0:from label to relationType; 1: from relationType to label
 	private int direction;
+	private int weight;
 	
 	
+	public int getWeight() {
+		return weight;
+	}
+	public void setWeight(int weight) {
+		this.weight = weight;
+	}
 	public GraphNodeLabel getLabel() {
 		return label;
 	}

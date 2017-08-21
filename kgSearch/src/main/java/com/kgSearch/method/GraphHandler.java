@@ -1,6 +1,7 @@
 package com.kgSearch.method;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +32,7 @@ public class GraphHandler {
 	private ArrayList<GraphNodeLabel> sub_ELL;
 	private ArrayList<GraphNode> sub_EL;
 	private ArrayList<GraphPathPattern> SResult;
+	private double weight;
 	
 	
 	public ArrayList<GraphRelationshipType> searchRelationshipTypeByVerb(RelationTypeService relationTypeService, String graphID){
@@ -104,7 +106,8 @@ public class GraphHandler {
 			updateSub_ELLSub_RTLFromSResult();
 		}
 		updateTResultWeight();
-		
+		updateSResultWeight();
+		computeGraphResultWeight();
 	}
 	
 	//merge VRTL and ARTL
@@ -473,6 +476,7 @@ public class GraphHandler {
 								}
 							}
 						}
+						gp.setWeight(gp.getWeight() + gn.getWeight());
 					}
 					if(this.RTL!=null){
 						for(GraphRelationship gr : gp.getEdges()){
@@ -480,10 +484,57 @@ public class GraphHandler {
 								gr.setMatchTags(rtl_map.get(gr.getType()).getMatchTags());
 								gr.setWeight(rtl_map.get(gr.getType()).getWeight());
 							}
+							gp.setWeight(gp.getWeight() + gr.getWeight());
 						}
 					}
 				}
+				Collections.sort(this.TResult, new CompareGraphPathByWeight());
 			}
+		}
+		
+		//update SResult's  weight;
+		public void updateSResultWeight(){
+			if(this.SResult!=null){
+				for(GraphPathPattern gpp : this.SResult){
+					gpp.setWeight(gpp.getLabel().getWeight() + gpp.getRelationType().getWeight());
+				}
+				Collections.sort(this.SResult, new CompareGraphPathPatternByWeight());
+			}
+		}
+		
+		// compute graph search result weight
+		public void computeGraphResultWeight(){
+			int allTResultWeight = 0;
+			int allSResultWeight = 0;
+			int allSub_ELLWeight = 0;
+			int allSub_ELWeight = 0;
+			int allSub_RTLWeight = 0;
+			if(this.TResult!=null){
+				for(GraphPath gp : this.TResult){
+					allTResultWeight = allTResultWeight + gp.getWeight();
+				}
+			}
+			if(this.SResult!=null){
+				for(GraphPathPattern gpp : this.SResult){
+					allSResultWeight = allSResultWeight + gpp.getWeight();
+				}
+			}
+			if(this.sub_ELL!=null){
+				for(GraphNodeLabel gnl : this.sub_ELL){
+					allSub_ELLWeight = allSub_ELLWeight + gnl.getWeight();
+				}
+			}
+			if(this.sub_EL!=null){
+				for(GraphNode gn : this.sub_EL){
+					allSub_ELWeight = allSub_ELWeight + gn.getWeight();
+				}
+			}
+			if(this.sub_RTL!=null){
+				for(GraphRelationshipType grt : this.sub_RTL){
+					allSub_RTLWeight = allSub_RTLWeight + grt.getWeight();
+				}
+			}
+			this.weight = 0.8*(allTResultWeight + allSub_ELWeight) + 0.2*(0.8*allSResultWeight + 0.2*(allSub_ELLWeight + allSub_RTLWeight));
 		}
 		
 		public ArrayList<String> getVerbList() {
@@ -582,6 +633,14 @@ public class GraphHandler {
 			SResult = sResult;
 		}
 
+		public double getWeight() {
+			return weight;
+		}
+
+		public void setWeight(double weight) {
+			this.weight = weight;
+		}
+
 		
 		
 }
@@ -596,5 +655,22 @@ class Mycompare implements Comparator<GraphPath>{
 		if(gp1.compare(gp2) || gp1.contains(gp2))
 		  i = 0;
 	    return i;  
+	}  
+  }  
+
+
+class CompareGraphPathByWeight implements Comparator<GraphPath>{  
+
+	@Override
+	public int compare(GraphPath o1, GraphPath o2) {
+	    return (o2.getWeight()<o1.getWeight()?-1:(o2.getWeight()==o1.getWeight()?0:1));  
+	}  
+  }  
+
+class CompareGraphPathPatternByWeight implements Comparator<GraphPathPattern>{  
+
+	@Override
+	public int compare(GraphPathPattern o1, GraphPathPattern o2) {
+	    return (o2.getWeight()<o1.getWeight()?-1:(o2.getWeight()==o1.getWeight()?0:1));  
 	}  
   }  
