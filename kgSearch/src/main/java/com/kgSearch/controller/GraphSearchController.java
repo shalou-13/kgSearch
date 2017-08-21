@@ -120,10 +120,10 @@ public class GraphSearchController {
 				if(graphHandler instanceof ReNeo4jHandler){
 					Driver driver=GraphDatabase.driver("bolt://localhost",AuthTokens.basic("neo4j","123456"));
 					reNeo4jHandler.initSession(driver);
-					ArrayList<LabelProperties> AllLabel=labelService.getAllLabel();
-					ArrayList<TypeProperties> AllType=relationTypeService.GetAllRelationType();
+					ArrayList<LabelProperties> AllLabel=labelService.getLabelByGraphID(graphID);
+					ArrayList<TypeProperties> AllType=relationTypeService.GetRelationTypeByGraphID(graphID);
 					reNeo4jHandler.initIdMap(AllLabel, AllType);
-					reNeo4jHandler.searchAction(labelService, relationTypeService);
+					reNeo4jHandler.searchAction(labelService, relationTypeService, graphID);
 					HashMap<String, Object> result = new HashMap<String, Object>();
 					result.put("TResult", reNeo4jHandler.getTResult());
 					result.put("SResult", reNeo4jHandler.getSResult());
@@ -199,7 +199,7 @@ public class GraphSearchController {
 					ArrayList<LabelProperties> AllLabel=labelService.getAllLabel();
 					ArrayList<TypeProperties> AllType=relationTypeService.GetAllRelationType();
 					reNeo4jHandler.initIdMap(AllLabel, AllType);
-					reNeo4jHandler.searchAction(labelService, relationTypeService);
+					reNeo4jHandler.searchAction(labelService, relationTypeService, graphID);
 					HashMap<String, Object> result = new HashMap<String, Object>();
 					result.put("TResult", reNeo4jHandler.getTResult());
 					result.put("SResult", reNeo4jHandler.getSResult());

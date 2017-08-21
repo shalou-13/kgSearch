@@ -33,19 +33,19 @@ public class GraphHandler {
 	private ArrayList<GraphPathPattern> SResult;
 	
 	
-	public ArrayList<GraphRelationshipType> searchRelationshipTypeByVerb(RelationTypeService relationTypeService){
+	public ArrayList<GraphRelationshipType> searchRelationshipTypeByVerb(RelationTypeService relationTypeService, String graphID){
 		return null;
 	}
 
-	public ArrayList<GraphRelationshipType> searchRelationshipTypeByAdj(RelationTypeService relationTypeService){
+	public ArrayList<GraphRelationshipType> searchRelationshipTypeByAdj(RelationTypeService relationTypeService, String graphID){
 		return null;
 	}
 	
-	public ArrayList<GraphNodeLabel> searchGraphNodeLabelByNoun(LabelService labelService){
+	public ArrayList<GraphNodeLabel> searchGraphNodeLabelByNoun(LabelService labelService, String graphID){
 		return null;
 	}
 
-	public ArrayList<GraphNodeLabel> searchGraphNodeLabelByAdj(LabelService labelService){
+	public ArrayList<GraphNodeLabel> searchGraphNodeLabelByAdj(LabelService labelService, String graphID){
 		return null;
 	}
 	
@@ -73,11 +73,11 @@ public class GraphHandler {
 		return null;
 	}
 	
-	public void searchAction(LabelService labelService, RelationTypeService relationTypeService){
-		ArrayList<GraphRelationshipType> vRTL = searchRelationshipTypeByVerb(relationTypeService);
-		ArrayList<GraphRelationshipType> aRTL = searchRelationshipTypeByAdj(relationTypeService);
-		ArrayList<GraphNodeLabel> nELL = searchGraphNodeLabelByNoun(labelService);
-		ArrayList<GraphNodeLabel> aELL = searchGraphNodeLabelByAdj(labelService);
+	public void searchAction(LabelService labelService, RelationTypeService relationTypeService, String graphID){
+		ArrayList<GraphRelationshipType> vRTL = searchRelationshipTypeByVerb(relationTypeService, graphID);
+		ArrayList<GraphRelationshipType> aRTL = searchRelationshipTypeByAdj(relationTypeService, graphID);
+		ArrayList<GraphNodeLabel> nELL = searchGraphNodeLabelByNoun(labelService, graphID);
+		ArrayList<GraphNodeLabel> aELL = searchGraphNodeLabelByAdj(labelService, graphID);
 		ArrayList<GraphNode> EL = searchGraphNodeByNoun();
 		setRTL(vRTL, aRTL);
 		setELL(nELL, aELL);
@@ -259,35 +259,35 @@ public class GraphHandler {
 				}
 			}
 			if(!t6.isEmpty()){
-				ArrayList<GraphRelationshipType> sub_RTL = new ArrayList<GraphRelationshipType>();
+				ArrayList<GraphRelationshipType> subRTL = new ArrayList<GraphRelationshipType>();
 				for(GraphRelationshipType grt1 : RTL){
 					if(!t6.containsKey(grt1.getId()))
-						sub_RTL.add(grt1);
+						subRTL.add(grt1);
 				}
-				if(sub_RTL.size()!=0)
-					this.sub_RTL = sub_RTL;
+				if(subRTL.size()!=0)
+					this.sub_RTL = subRTL;
 			}else if(RTL!=null){
 				this.sub_RTL = RTL;
 			}
 			if(!t5.isEmpty()){
-				ArrayList<GraphNodeLabel> sub_ELL = new ArrayList<GraphNodeLabel>();
+				ArrayList<GraphNodeLabel> subELL = new ArrayList<GraphNodeLabel>();
 				for(GraphNodeLabel gnl1 : ELL){
 					if(!t5.containsKey(gnl1.getId()))
-						sub_ELL.add(gnl1);
+						subELL.add(gnl1);
 				}
-				if(sub_ELL.size()!=0)
-					this.sub_ELL = sub_ELL;
+				if(subELL.size()!=0)
+					this.sub_ELL = subELL;
 			}else if(ELL!=null){
 				this.sub_ELL = ELL;
 			}
 			if(!t4.isEmpty()){
-				ArrayList<GraphNode> sub_EL = new ArrayList<GraphNode>();
+				ArrayList<GraphNode> subEL = new ArrayList<GraphNode>();
 				for(GraphNode gn2 : EL){
 					if(!t4.containsKey(gn2.getId()))
-						sub_EL.add(gn2);
+						subEL.add(gn2);
 				}
-				if(sub_EL.size()!=0)
-					this.sub_EL = sub_EL;
+				if(subEL.size()!=0)
+					this.sub_EL = subEL;
 			}else if(EL!=null){
 				this.sub_EL = EL;
 			}
@@ -403,23 +403,29 @@ public class GraphHandler {
 					if(t1.containsKey(gpp.getRelationType().getId()) && !t4.containsKey(gpp.getRelationType().getId()))
 						t4.put(gpp.getRelationType().getId(), "");
 				}
-				if(!t3.isEmpty()){
-					ArrayList<GraphNodeLabel> sub_ELL = new ArrayList<GraphNodeLabel>();
+				if(t3.size()!=0){
+					ArrayList<GraphNodeLabel> subELL = new ArrayList<GraphNodeLabel>();
 					for(GraphNodeLabel gnl1 : this.sub_ELL){
 						if(!t3.containsKey(gnl1.getId()))
-							sub_ELL.add(gnl1);
+							subELL.add(gnl1);
 					}
-					if(sub_ELL.size()!=0)
-						this.sub_ELL = sub_ELL;
+					if(subELL.size()!=0){
+						this.sub_ELL = subELL;
+					}else{
+						this.sub_ELL = null;
+					}
 				}
-				if(!t4.isEmpty()){
-					ArrayList<GraphRelationshipType> sub_RTL = new ArrayList<GraphRelationshipType>();
+				if(t4.size()!=0){
+					ArrayList<GraphRelationshipType> subRTL = new ArrayList<GraphRelationshipType>();
 					for(GraphRelationshipType grt1 : this.sub_RTL){
 						if(!t4.containsKey(grt1.getId()))
-							sub_RTL.add(grt1);
+							subRTL.add(grt1);
 					}
-					if(sub_RTL.size()!=0)
-						this.sub_RTL = sub_RTL;
+					if(subRTL.size()!=0){
+						this.sub_RTL = subRTL;
+					}else{
+						this.sub_RTL = null;
+					}
 				}
 			}
 		}

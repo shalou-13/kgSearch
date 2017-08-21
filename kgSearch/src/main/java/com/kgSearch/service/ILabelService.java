@@ -11,5 +11,11 @@ public interface ILabelService {
     public ArrayList<LabelProperties> fuzzySelectLabelByString(String label);
     
     public ArrayList<LabelProperties> fuzzySelectPropertiesByString(String property);
+    
+    public ArrayList<LabelProperties> getLabelByGraphID(String graphID);
+    
+    public ArrayList<LabelProperties> fuzzySelectLabelByStringFromGraph(String keyword, String graphID);
+    
+    public ArrayList<LabelProperties> fuzzySelectPropertiesByStringFromGraph(String keyword, String graphID);
 
 }

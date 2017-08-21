@@ -44,11 +44,11 @@ public class Neo4jGraphHandler extends GraphHandler{
 	}
 	
 	@Override
-	public ArrayList<GraphRelationshipType> searchRelationshipTypeByVerb(RelationTypeService relationTypeService) {
+	public ArrayList<GraphRelationshipType> searchRelationshipTypeByVerb(RelationTypeService relationTypeService, String graphID) {
 		ArrayList<GraphRelationshipType> VRTL=new ArrayList<>();
 		Set<Integer> idOfVRTL=new HashSet<>();
 		for(String Averb:this.getVerbList()){
-			ArrayList<TypeProperties> searchResult=relationTypeService.fuzzySelectTypeByString(Averb);
+			ArrayList<TypeProperties> searchResult=relationTypeService.fuzzySelectTypeByStringFromGraph(Averb, graphID);
 			for(TypeProperties Atype:searchResult){
 				int id=Atype.getId();
 				if(idOfVRTL.contains(id)==false){
@@ -85,11 +85,11 @@ public class Neo4jGraphHandler extends GraphHandler{
 	}
 
 	@Override
-	public ArrayList<GraphRelationshipType> searchRelationshipTypeByAdj(RelationTypeService relationTypeService) {
+	public ArrayList<GraphRelationshipType> searchRelationshipTypeByAdj(RelationTypeService relationTypeService, String graphID) {
 		ArrayList<GraphRelationshipType> ARTL=new ArrayList<>();
 		Set<Integer> idOfARTL=new HashSet<>();
 		for(String Aadj:this.getAdList()){
-			ArrayList<TypeProperties> searchResult=relationTypeService.fuzzySelectPropertiesByString(Aadj);
+			ArrayList<TypeProperties> searchResult=relationTypeService.fuzzySelectPropertiesByStringFromGraph(Aadj, graphID);
 			for(TypeProperties Atype:searchResult){
 				int id=Atype.getId();
 				if(idOfARTL.contains(id)==false){
@@ -126,11 +126,11 @@ public class Neo4jGraphHandler extends GraphHandler{
 	}
 
 	@Override
-	public ArrayList<GraphNodeLabel> searchGraphNodeLabelByNoun(LabelService labelService) {
+	public ArrayList<GraphNodeLabel> searchGraphNodeLabelByNoun(LabelService labelService, String graphID) {
 		ArrayList<GraphNodeLabel> NELL=new ArrayList<>();	
 		Set<Integer> idOfNELL=new HashSet<>();
 		for(String Anoun:this.getNounList()){
-			ArrayList<LabelProperties> searchResult=labelService.fuzzySelectLabelByString(Anoun);
+			ArrayList<LabelProperties> searchResult=labelService.fuzzySelectLabelByStringFromGraph(Anoun, graphID);
 			for(LabelProperties Alabel:searchResult){
 				int id=Alabel.getId();
 				if(idOfNELL.contains(id)==false){
@@ -167,11 +167,11 @@ public class Neo4jGraphHandler extends GraphHandler{
 	}
 
 	@Override
-	public ArrayList<GraphNodeLabel> searchGraphNodeLabelByAdj(LabelService labelService) {
+	public ArrayList<GraphNodeLabel> searchGraphNodeLabelByAdj(LabelService labelService, String graphID) {
 		ArrayList<GraphNodeLabel> AELL=new ArrayList<>();
 		Set<Integer> idOfAELL=new HashSet<>();
 		for(String Aadj:this.getAdList()){
-			ArrayList<LabelProperties> searchResult=labelService.fuzzySelectPropertiesByString(Aadj);
+			ArrayList<LabelProperties> searchResult=labelService.fuzzySelectPropertiesByStringFromGraph(Aadj, graphID);
 			for(LabelProperties Alabel:searchResult){
 				int id=Alabel.getId();
 				if(idOfAELL.contains(id)==false){

@@ -31,10 +31,20 @@
     from lp
     where label like '%${_parameter}%' 
   </select>
+  <select id="fuzzySelectLabelByStringFromGraph" resultMap="ResultMapWithBLOBs">
+    select lp.id, lp.label, lp.properties
+    from labelmapgraph lmg, lp 
+    where lmg.graphID = #{graphID,jdbcType=VARCHAR} and lp.id = lmg.labelID	and lp.label like '%' #{keyword,jdbcType=VARCHAR} '%' 
+  </select>
   <select id="fuzzySelectPropertiesByString" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
     select *
     from lp
     where properties like '%${_parameter}%' 
+  </select>
+  <select id="fuzzySelectPropertiesByStringFromGraph" resultMap="ResultMapWithBLOBs">
+    select lp.id, lp.label, lp.properties
+    from labelmapgraph lmg, lp 
+    where lmg.graphID = #{graphID,jdbcType=VARCHAR} and lp.id = lmg.labelID	and lp.properties like '%' #{keyword,jdbcType=VARCHAR} '%' 
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from lp
@@ -94,4 +104,9 @@
     set label = #{label,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <select id="selectLabelByGraphID" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+    select lp.id, lp.label, lp.properties
+    from labelmapgraph lmg, lp
+    where lmg.graphID = #{graphID,jdbcType=VARCHAR} and lp.id = lmg.labelID	
+  </select>
 </mapper>

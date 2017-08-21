@@ -2,6 +2,8 @@ package com.kgSearch.dao;
 
 import java.util.ArrayList;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.kgSearch.pojo.LabelProperties;
 
 public interface LabelPropertiesMapper {
@@ -23,5 +25,11 @@ public interface LabelPropertiesMapper {
     
     ArrayList<LabelProperties> fuzzySelectLabelByString(String label);
     
+    ArrayList<LabelProperties> fuzzySelectLabelByStringFromGraph(@Param("keyword")String keyword, @Param("graphID")String graphID);
+    
     ArrayList<LabelProperties> fuzzySelectPropertiesByString(String property);
+    
+    ArrayList<LabelProperties> fuzzySelectPropertiesByStringFromGraph(@Param("keyword")String keyword, @Param("graphID")String graphID);
+    
+    ArrayList<LabelProperties> selectLabelByGraphID(String graphID);
 }

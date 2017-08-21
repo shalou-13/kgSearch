@@ -15,12 +15,12 @@ public class LabelService implements ILabelService{
 	
 	@Resource
 	private LabelPropertiesMapper labelPropertiesMapper;
-
+	
 	@Override
 	public ArrayList<LabelProperties> getAllLabel() {
 		return this.labelPropertiesMapper.selectAll();
 	}
-
+	
 	@Override
 	public ArrayList<LabelProperties> fuzzySelectLabelByString(String label) {
 		return this.labelPropertiesMapper.fuzzySelectLabelByString(label);
@@ -29,6 +29,21 @@ public class LabelService implements ILabelService{
 	@Override
 	public ArrayList<LabelProperties> fuzzySelectPropertiesByString(String property) {
 		return this.labelPropertiesMapper.fuzzySelectPropertiesByString(property);
+	}
+
+	@Override
+	public ArrayList<LabelProperties> getLabelByGraphID(String graphID) {
+		return this.labelPropertiesMapper.selectLabelByGraphID(graphID);
+	}
+
+	@Override
+	public ArrayList<LabelProperties> fuzzySelectLabelByStringFromGraph(String keyword, String graphID) {
+		return this.labelPropertiesMapper.fuzzySelectLabelByStringFromGraph(keyword, graphID);
+	}
+
+	@Override
+	public ArrayList<LabelProperties> fuzzySelectPropertiesByStringFromGraph(String keyword, String graphID) {
+		return this.labelPropertiesMapper.fuzzySelectPropertiesByStringFromGraph(keyword, graphID);
 	}
 
 }

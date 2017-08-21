@@ -27,27 +27,27 @@ public class ExampleGraphHandler extends GraphHandler {
 
 	
 	@Override
-	public ArrayList<GraphRelationshipType> searchRelationshipTypeByVerb(RelationTypeService relationTypeService) {
+	public ArrayList<GraphRelationshipType> searchRelationshipTypeByVerb(RelationTypeService relationTypeService, String graphID) {
 		// TODO Auto-generated method stub
-		return super.searchRelationshipTypeByVerb(relationTypeService);
+		return super.searchRelationshipTypeByVerb(relationTypeService, graphID);
 	}
 	
 	@Override
-	public ArrayList<GraphRelationshipType> searchRelationshipTypeByAdj(RelationTypeService relationTypeService) {
+	public ArrayList<GraphRelationshipType> searchRelationshipTypeByAdj(RelationTypeService relationTypeService, String graphID) {
 		// TODO Auto-generated method stub
-		return super.searchRelationshipTypeByAdj(relationTypeService);
+		return super.searchRelationshipTypeByAdj(relationTypeService, graphID);
 	}
 	
 	@Override
-	public ArrayList<GraphNodeLabel> searchGraphNodeLabelByNoun(LabelService labelService) {
+	public ArrayList<GraphNodeLabel> searchGraphNodeLabelByNoun(LabelService labelService, String graphID) {
 		// TODO Auto-generated method stub
-		return super.searchGraphNodeLabelByNoun(labelService);
+		return super.searchGraphNodeLabelByNoun(labelService, graphID);
 	}
 	
 	@Override
-	public ArrayList<GraphNodeLabel> searchGraphNodeLabelByAdj(LabelService labelService) {
+	public ArrayList<GraphNodeLabel> searchGraphNodeLabelByAdj(LabelService labelService, String graphID) {
 		// TODO Auto-generated method stub
-		return super.searchGraphNodeLabelByAdj(labelService);
+		return super.searchGraphNodeLabelByAdj(labelService, graphID);
 	}
 	
 	@Override
