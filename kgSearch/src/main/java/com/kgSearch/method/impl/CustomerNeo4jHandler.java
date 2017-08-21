@@ -65,12 +65,12 @@ public class CustomerNeo4jHandler extends Neo4jGraphHandler {
 				}
 				matchTags.setNounMatch(true);
 				for(String Anoun:this.getNounList()){
-					if(node.get("categoryName").asString().equals(Anoun))
+					if(node.get("categoryName").asString().indexOf(Anoun)>=0)
 						matchTags.addNounMatchTag(Anoun);
 				}
 				GraphNode graphNode=new GraphNode();
 				graphNode.setId(node.id());
-				graphNode.setWeight(matchTags.getNounMatchList().size());
+				graphNode.setWeight(matchTags.getNounMatchList()!=null?matchTags.getNounMatchList().size():0);
 				graphNode.setLabels(labels);
 				graphNode.setMatchTag(matchTags);
 				graphNode.setProperties(properties);
@@ -116,7 +116,7 @@ public class CustomerNeo4jHandler extends Neo4jGraphHandler {
 				}
 				GraphNode graphNode=new GraphNode();
 				graphNode.setId(node.id());
-				graphNode.setWeight(matchTags.getNounMatchList().size());
+				graphNode.setWeight(matchTags.getNounMatchList()!=null?matchTags.getNounMatchList().size():0);
 				graphNode.setLabels(labels);
 				graphNode.setMatchTag(matchTags);
 				graphNode.setProperties(properties);
@@ -162,7 +162,7 @@ public class CustomerNeo4jHandler extends Neo4jGraphHandler {
 				}
 				GraphNode graphNode=new GraphNode();
 				graphNode.setId(node.id());
-				graphNode.setWeight(matchTags.getNounMatchList().size());
+				graphNode.setWeight(matchTags.getNounMatchList()!=null?matchTags.getNounMatchList().size():0);
 				graphNode.setLabels(labels);
 				graphNode.setMatchTag(matchTags);
 				graphNode.setProperties(properties);
@@ -208,7 +208,7 @@ public class CustomerNeo4jHandler extends Neo4jGraphHandler {
 				}
 				GraphNode graphNode=new GraphNode();
 				graphNode.setId(node.id());
-				graphNode.setWeight(matchTags.getNounMatchList().size());
+				graphNode.setWeight(matchTags.getNounMatchList()!=null?matchTags.getNounMatchList().size():0);
 				graphNode.setLabels(labels);
 				graphNode.setMatchTag(matchTags);
 				graphNode.setProperties(properties);
@@ -254,7 +254,7 @@ public class CustomerNeo4jHandler extends Neo4jGraphHandler {
 				}
 				GraphNode graphNode=new GraphNode();
 				graphNode.setId(node.id());
-				graphNode.setWeight(matchTags.getNounMatchList().size());
+				graphNode.setWeight(matchTags.getNounMatchList()!=null?matchTags.getNounMatchList().size():0);
 				graphNode.setLabels(labels);
 				graphNode.setMatchTag(matchTags);
 				graphNode.setProperties(properties);

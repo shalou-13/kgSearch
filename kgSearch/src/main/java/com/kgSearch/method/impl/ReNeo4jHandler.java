@@ -61,7 +61,7 @@ public class ReNeo4jHandler extends Neo4jGraphHandler{
 				}
 				GraphNode graphNode=new GraphNode();
 				graphNode.setId(node.id());
-				graphNode.setWeight(matchTags.getNounMatchList().size());
+				graphNode.setWeight(matchTags.getNounMatchList()!=null?matchTags.getNounMatchList().size():0);
 				graphNode.setLabels(labels);
 				graphNode.setMatchTag(matchTags);
 				graphNode.setProperties(properties);
@@ -107,7 +107,7 @@ public class ReNeo4jHandler extends Neo4jGraphHandler{
 				}
 				GraphNode graphNode=new GraphNode();
 				graphNode.setId(node.id());
-				graphNode.setWeight(matchTags.getNounMatchList().size());
+				graphNode.setWeight(matchTags.getNounMatchList()!=null?matchTags.getNounMatchList().size():0);
 				graphNode.setLabels(labels);
 				graphNode.setMatchTag(matchTags);
 				graphNode.setProperties(properties);
