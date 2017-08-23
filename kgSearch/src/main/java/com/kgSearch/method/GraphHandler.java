@@ -504,19 +504,46 @@ public class GraphHandler {
 		
 		// compute graph search result weight
 		public void computeGraphResultWeight(){
-			int allTResultWeight = 0;
-			int allSResultWeight = 0;
-			int allSub_ELLWeight = 0;
-			int allSub_ELWeight = 0;
-			int allSub_RTLWeight = 0;
+			double allTResultWeight = 0;
+			double allSResultWeight = 0;
+			double allSub_ELLWeight = 0;
+			double allSub_ELWeight = 0;
+			double allSub_RTLWeight = 0;
+			double allWeight = 0;
 			if(this.TResult!=null){
+				Map<Long, GraphNode> el_map = new HashMap<Long, GraphNode>();
+				Map<Long, GraphRelationship> rtl_map = new HashMap<Long, GraphRelationship>();
 				for(GraphPath gp : this.TResult){
-					allTResultWeight = allTResultWeight + gp.getWeight();
+					for(GraphNode gn : gp.getNodes()){
+						if(!el_map.containsKey(gn.getId()))
+							el_map.put(gn.getId(), gn);
+						}
+					for(GraphRelationship gr : gp.getEdges()){
+						if(!rtl_map.containsKey(gr.getType()))
+							rtl_map.put(gr.getId(), gr);
+					}
+				}
+				for(Long key : el_map.keySet()){
+					allTResultWeight = allTResultWeight + el_map.get(key).getWeight();
+				}
+				for(Long key : rtl_map.keySet()){
+					allTResultWeight = allTResultWeight + rtl_map.get(key).getWeight();
 				}
 			}
 			if(this.SResult!=null){
+				Map<Integer, GraphRelationshipType> rtl_map = new HashMap<Integer, GraphRelationshipType>();
+				Map<Integer, GraphNodeLabel> ell_map = new HashMap<Integer, GraphNodeLabel>();
 				for(GraphPathPattern gpp : this.SResult){
-					allSResultWeight = allSResultWeight + gpp.getWeight();
+					if(!ell_map.containsKey(gpp.getLabel().getId()))
+						ell_map.put(gpp.getLabel().getId(), gpp.getLabel());
+					if(!rtl_map.containsKey(gpp.getRelationType().getId()))
+						rtl_map.put(gpp.getRelationType().getId(), gpp.getRelationType());
+				}
+				for(Integer key : rtl_map.keySet()){
+					allSResultWeight = allSResultWeight + rtl_map.get(key).getWeight();
+				}
+				for(Integer key : ell_map.keySet()){
+					allSResultWeight = allSResultWeight + ell_map.get(key).getWeight();
 				}
 			}
 			if(this.sub_ELL!=null){
@@ -533,6 +560,14 @@ public class GraphHandler {
 				for(GraphRelationshipType grt : this.sub_RTL){
 					allSub_RTLWeight = allSub_RTLWeight + grt.getWeight();
 				}
+			}
+			allWeight = allTResultWeight + allSResultWeight + allSub_ELLWeight + allSub_ELWeight + allSub_RTLWeight;
+			if(allWeight!=0){
+				allTResultWeight= allTResultWeight/allWeight;
+				allSResultWeight= allSResultWeight/allWeight;
+				allSub_ELLWeight= allSub_ELLWeight/allWeight;
+				allSub_ELWeight= allSub_ELWeight/allWeight;
+				allSub_RTLWeight= allSub_RTLWeight/allWeight;
 			}
 			this.weight = 0.8*(allTResultWeight + allSub_ELWeight) + 0.2*(0.8*allSResultWeight + 0.2*(allSub_ELLWeight + allSub_RTLWeight));
 		}
